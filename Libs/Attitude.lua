@@ -6,16 +6,34 @@ require("Libs.Quaternion")
 ---@field pitch number
 ---@field roll number
 ---@field yaw number
----@field pitchSpeed number
----@field rollSpeed number
----@field yawSpeed number
 ---@field rotation Quaternion
+---@field private tiltFrontPast number
+---@field private tiltLeftPast number
+---@field private tiltUpPast number
+---@field private compassPast number
+---@field private tiltFrontSpeed number
+---@field private tiltLeftSpeed number
+---@field private tiltUpSpeed number
+---@field private compassSpeed number
 Attitude = {
 	---@param cls Attitude
 	---@overload fun(cls:Attitude):Attitude creates a new zero-initialized Attitude
 	---@return Attitude
 	new = function(cls, pitch, roll, yaw)
-		return LifeBoatAPI.lb_copy(cls, { pitch = pitch or 0, roll = roll or 0, yaw = yaw or 0, rotation = Quaternion:new() })
+		local self = setmetatable({}, cls)
+		self.pitch = pitch or 0
+		self.roll = roll or 0
+		self.yaw = yaw or 0
+		self.rotation = Quaternion:new()
+		self.tiltFrontPast = 0
+		self.tiltLeftPast = 0
+		self.tiltUpPast = 0
+		self.compassPast = 0
+		self.tiltFrontSpeed = 0
+		self.tiltLeftSpeed = 0
+		self.tiltUpSpeed = 0
+		self.compassSpeed = 0
+		return self
 	end;
 
 	---@section update
