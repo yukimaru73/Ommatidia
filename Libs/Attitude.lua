@@ -21,11 +21,11 @@ Attitude = {
 	---@section update
 	---@param self Attitude
 	---@param tiltFront number 
-	---@param tiltRight number
+	---@param tiltLeft number
 	---@param tiltUp number
 	---@param compass number
 	---@return nil
-	update = function(self, tiltFront, tiltRight, tiltUp, compass)
+	update = function(self, tiltFront, tiltLeft, tiltUp, compass)
 
 	end;
 	---@endsection
