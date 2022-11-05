@@ -38,12 +38,27 @@ Attitude = {
 
 	---@section update
 	---@param self Attitude
-	---@param tiltFront number 
+	---@param tiltFront number
 	---@param tiltLeft number
-	---@param tiltUp number
 	---@param compass number
+	---@param tiltUp number
 	---@return nil
-	update = function(self, tiltFront, tiltLeft, tiltUp, compass)
+	update = function(self, tiltFront, tiltLeft, compass, tiltUp)
+		tiltUp = tiltUp or 0
+		compass = ((compass + 1.75) % 1 - 0.5) * 2 * math.pi
+		tiltLeft = 2 * math.pi * tiltLeft
+		tiltFront = math.asin(math.sin(2 * math.pi * tiltFront) / math.cos(tiltLeft))
+		if tiltUp < 0 then
+			if tiltFront > 0 then
+				tiltFront = math.pi - tiltFront
+			elseif tiltFront < 0 then
+				tiltFront = -math.pi - tiltFront
+			elseif tiltUp == 0 then
+				tiltFront = math.pi/2
+			end
+			
+		end
+
 
 	end;
 	---@endsection
