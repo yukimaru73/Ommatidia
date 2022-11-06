@@ -59,6 +59,7 @@ Attitude = {
 		self.pitch = tiltFront
 		self.roll = tiltLeft
 		self.yaw = compass
+		self.rotation = Quaternion:newFromEuler(self.pitch, self.roll, self.yaw)
 	end;
 	---@endsection
 

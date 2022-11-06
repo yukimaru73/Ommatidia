@@ -1,4 +1,5 @@
-require("LifeBoatAPI.Utils.LBCopy")
+--require("LifeBoatAPI.Utils.LBCopy")
+require("Libs.LBCopy")
 
 ---@section Vector3 1 Vector3  {x,y,z}
 ---@class Vector3
