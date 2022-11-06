@@ -2,10 +2,11 @@ require("Libs.Vector3")
 INPUT_TARGETS = {}
 BASE_LENGTH = 0.25
 
+
 function onTick()
 	local xt, yt, zt = 0, 0, 0
 	for i = 1, 9 do
-		local x, y, z = input.getNumber(3 * i - 2), input.getNumber(3 * i - 1), input.getNumber(3 * i)
+		local x, y, z = input.getNumber(3 * i), input.getNumber(3 * i + 1), input.getNumber(3 * i + 2)
 		INPUT_TARGETS[i] = Vector3:new(x, y, z)
 	end
 	for i = 1, 3 do
@@ -34,4 +35,7 @@ function onTick()
 	output.setNumber(1, xt)
 	output.setNumber(2, yt)
 	output.setNumber(3, zt)
+
+	output.setNumber(4, input.getNumber(15))
+	output.setNumber(5, input.getNumber(16))
 end
