@@ -1,10 +1,12 @@
 require("Libs.Vector3")
 INPUT_TARGETS = {}
 BASE_LENGTH = 0.25
+FOUND = false
 
 
 function onTick()
 	local xt, yt, zt = 0, 0, 0
+	FOUND = false
 	for i = 1, 9 do
 		local x, y, z = input.getNumber(3 * i), input.getNumber(3 * i + 1), input.getNumber(3 * i + 2)
 		INPUT_TARGETS[i] = Vector3:new(x, y, z)
@@ -14,6 +16,7 @@ function onTick()
 			if INPUT_TARGETS[i].x ~= 0 and INPUT_TARGETS[i].y ~= 0 and INPUT_TARGETS[i].z ~= 0 then
 				local subVec = Vector3:new(BASE_LENGTH, (j - 2) * BASE_LENGTH, (i - 2) * BASE_LENGTH)
 				INPUT_TARGETS[i] = Vector3.sub(INPUT_TARGETS[i], subVec)
+				FOUND = true
 			end
 		end
 	end
@@ -36,6 +39,8 @@ function onTick()
 	output.setNumber(2, yt)
 	output.setNumber(3, zt)
 
-	output.setNumber(4, input.getNumber(15))
-	output.setNumber(5, input.getNumber(16))
+	output.setBool(1, FOUND)
+	output.setBool(2, input.getBool(1))
+	output.setNumber(15, input.getNumber(1))
+	output.setNumber(16, input.getNumber(2))
 end

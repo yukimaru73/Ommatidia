@@ -2,7 +2,6 @@ require("Libs.Vector3")
 
 BASE_DISTANCE = 2
 INPUT_TARGETS = {}
-FOUND = false
 
 function onTick()
 	INPUT_TARGETS = {}
@@ -41,11 +40,9 @@ function onTick()
 		x = (xmax + xmin) * 0.5
 		y = (ymax + ymin) * 0.5
 		z = (zmax + zmin) * 0.5
-		FOUND = true
 	end
 	output.setNumber(1, x)
 	output.setNumber(2, y)
 	output.setNumber(3, z)
-	output.setBool(1, FOUND)
 	--debug.log("TST: X->,"..x..", Y->,"..y..", Z->,"..z..",")
 end

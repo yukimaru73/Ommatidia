@@ -1,4 +1,5 @@
 require("Libs.Attitude")
+require("Libs.Quaternion")
 require("Libs.PID")
 
 TIMELAG = property.getNumber("Time Lag Radar")
@@ -12,9 +13,9 @@ IS_TRACKING = false
 
 PIVOT_V = 0
 PIVOT_H = 0
-PivotPID = PID:new(20, 0.005, 0.3, 0.08)
+PivotPID = PID:new(6, 0, 0.3, 0)
 
-INC = 0.001
+INC = 0.005
 
 function onTick()
 	TARGET_POS = { input.getNumber(1), input.getNumber(2), input.getNumber(3) }
@@ -30,21 +31,20 @@ function onTick()
 				gPos[i] = gPos[i] + gVel[i] * TIMELAG
 			end
 		end
-		lpos = ATTITUDE_BASE:getFutureAttitude(TIMELAG):rotateVectorWorldToLocal(gPos)
-		PIVOT_V = 2 * math.atan(lPos[2], math.sqrt(lPos[1] * lPos[1] + lPos[3] * lPos[3])) / math.pi
-		PIVOT_H = 2 * math.atan(lPos[3], lPos[1]) / math.pi
+		lPos = ATTITUDE_BASE:getFutureAttitude(TIMELAG):rotateVectorWorldToLocal(gPos)
+		PIVOT_H, PIVOT_V = getAngle(lPos)
 		TARGET_G_POS_P = TARGET_POS
 		IS_TRACKING = true
 	else
-		if input.getNumber(15) == 1 then
+		if input.getNumber(15) == -1 then
 			PIVOT_H = PIVOT_H + INC
-		elseif input.getNumber(15) == -1 then
+		elseif input.getNumber(15) == 1 then
 			PIVOT_H = PIVOT_H - INC
 		end
 		if input.getNumber(16) == 1 then
-			PIVOT_V = clamp(PIVOT_V + INC, -1, 1)
+			PIVOT_V = clamp(PIVOT_V + INC, 1, -1)
 		elseif input.getNumber(16) == -1 then
-			PIVOT_V = clamp(PIVOT_V - INC, -1, 1)
+			PIVOT_V = clamp(PIVOT_V - INC, 1, -1)
 		end
 		IS_TRACKING = false
 	end
@@ -59,4 +59,10 @@ function clamp(value, max, min)
 		value = max
 	end
 	return value
+end
+function getAngle(vector)
+	local azimuth, elevation
+	azimuth = math.atan(vector[3], vector[1])
+	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
+	return azimuth, 2 * elevation / math.pi
 end
