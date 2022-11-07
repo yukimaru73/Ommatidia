@@ -1,9 +1,7 @@
-require("Libs.CompassSensor")
+require("Libs.Attitude")
 
-CS = CompassSensor:new()
-
-function onTick()
-	CS:update(input.getNumber(1))
-	debug.log("TST:->"..CS:getCompassSensorVelocity())
-	output.setNumber(1, CS:getCompassSensorVelocity())
-end
+A1 = Attitude:new()
+A1:update(0.125, 0, -0.25,-0.125)
+vec = { 1, 0, 0 }
+vec2 = A1:rotateVectorLocalToWorld(vec)
+a = 0

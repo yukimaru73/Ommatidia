@@ -1,4 +1,5 @@
-require("LifeBoatAPI.Utils.LBCopy")
+--require("LifeBoatAPI.Utils.LBCopy")
+require("Libs.LBCopy")
 require("Libs.Quaternion")
 
 ---@section Attitude 1 Attitude
@@ -42,8 +43,8 @@ Attitude = {
 		end
 		tiltUp = tiltUp or 0.25
 		compass = ((compass + 1.75) % 1 - 0.5) * 2 * math.pi
-		tiltLeft = 2 * math.pi * tiltLeft
-		tiltFront = math.asin(math.sin(2 * math.pi * tiltFront) / math.cos(tiltLeft))
+		tiltFront = 2 * math.pi * tiltFront
+		tiltLeft = math.asin(math.sin(2 * math.pi * tiltLeft)/math.cos(tiltFront))
 		if tiltUp < 0 then
 			if tiltFront > 0 then
 				tiltFront = math.pi - tiltFront

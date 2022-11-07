@@ -83,11 +83,11 @@ Quaternion = {
 	newFromEuler = function(cls, pitch, roll, yaw)
 		local v, q = {1,0,0}, cls:newRotateQuaternion(yaw, { 0, -1, 0 })--yaw
 
-		v = q:rotateVector({-1,0,0})
-		q = cls:newRotateQuaternion(roll,v):product(q)--roll
-
 		v = q:rotateVector({0,0,1})
 		q = cls:newRotateQuaternion(pitch,v):product(q)--pitch
+
+		v = q:rotateVector({-1,0,0})
+		q = cls:newRotateQuaternion(roll,v):product(q)--roll
 
 		return q
 	end
