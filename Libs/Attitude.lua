@@ -24,7 +24,7 @@ Attitude = {
 			pitch = pitch or 0,
 			roll = roll or 0,
 			yaw = yaw or 0,
-			rotation = Quaternion:_new(pitch or 0, roll or 0, yaw or 0),
+			rotation = Quaternion:newFromEuler(pitch or 0, roll or 0, yaw or 0),
 			pitchSpeed = 0,
 			rollSpeed = 0,
 			yawSpeed = 0
@@ -38,9 +38,7 @@ Attitude = {
 	---@param compass number
 	---@param tiltUp number
 	update = function(self, tiltFront, tiltLeft, compass, tiltUp)
-		local getRotationalSpeed = function(current, past)
-			return (current - past + 3 * math.pi / 2) % math.pi - math.pi / 2
-		end
+		
 		tiltUp = tiltUp or 0.25
 		compass = ((compass + 1.75) % 1 - 0.5) * 2 * math.pi
 		tiltFront = 2 * math.pi * tiltFront
@@ -54,9 +52,9 @@ Attitude = {
 				tiltFront = math.pi / 2
 			end
 		end
-		self.pitchSpeed = getRotationalSpeed(tiltFront, self.pitch)
-		self.rollSpeed = getRotationalSpeed(tiltLeft, self.roll)
-		self.yawSpeed = getRotationalSpeed(compass, self.yaw)
+		self.pitchSpeed = tiltFront - self.pitch
+		self.rollSpeed = tiltLeft - self.roll
+		self.yawSpeed = (compass - self.yaw + 3 * math.pi ) % (2*math.pi) - math.pi
 		self.pitch = tiltFront
 		self.roll = tiltLeft
 		self.yaw = compass

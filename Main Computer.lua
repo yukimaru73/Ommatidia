@@ -43,4 +43,6 @@ function onTick()
 	output.setBool(2, input.getBool(1))
 	output.setNumber(15, input.getNumber(1))
 	output.setNumber(16, input.getNumber(2))
+
+	
 end
