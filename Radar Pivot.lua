@@ -22,7 +22,7 @@ function onTick()
 	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6))
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 	local gPos = { 0, 0, 0 }
-	if input.getBool(1) and input.getBool(2) then
+	if input.getBool(1) and input.getBool(2) then--tracking on and target found
 		local lPos = { 0, 0, 0 }
 		gPos = ATTITUDE_RADAR:rotateVectorLocalToWorld(TARGET_POS)
 		if IS_TRACKING then
@@ -35,7 +35,7 @@ function onTick()
 		PIVOT_H, PIVOT_V = getAngle(lPos)
 		TARGET_G_POS_P = TARGET_POS
 		IS_TRACKING = true
-	else
+	else--manual radar operate
 		if input.getNumber(15) == -1 then
 			PIVOT_H = PIVOT_H + INC
 		elseif input.getNumber(15) == 1 then
