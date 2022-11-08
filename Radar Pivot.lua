@@ -19,7 +19,7 @@ INC = 0.005
 
 function onTick()
 	TARGET_POS = { input.getNumber(1), input.getNumber(2), input.getNumber(3) }
-	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6), 0.25)
+	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6))
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 	local gPos = { 0, 0, 0 }
 	if input.getBool(1) and input.getBool(2) then
