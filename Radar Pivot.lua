@@ -19,7 +19,7 @@ INC = 0.005
 
 function onTick()
 	TARGET_POS = { input.getNumber(1), input.getNumber(2), input.getNumber(3) }
-	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6))
+	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6), 0.25)
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 	local gPos = { 0, 0, 0 }
 	if input.getBool(1) and input.getBool(2) then--tracking on and target found
@@ -31,7 +31,9 @@ function onTick()
 				gPos[i] = gPos[i] + gVel[i] * TIMELAG
 			end
 		end
-		lPos = ATTITUDE_BASE:getFutureAttitude(TIMELAG):rotateVectorWorldToLocal(gPos)
+		local f = ATTITUDE_BASE:getFutureAttitude(0.0)
+		debug.log("TST: ,"..f.pitch..","..f.roll..","..f.yaw)
+		lPos = ATTITUDE_BASE:rotateVectorWorldToLocal(gPos)
 		PIVOT_H, PIVOT_V = getAngle(lPos)
 		TARGET_G_POS_P = TARGET_POS
 		IS_TRACKING = true
