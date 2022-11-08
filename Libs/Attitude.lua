@@ -37,6 +37,7 @@ Attitude = {
 	---@param tiltLeft number
 	---@param compass number
 	---@param tiltUp number
+	---@overload fun(self:Attitude, tiltFront:number, tiltLeft:number, compass:number):nil no tiltUp Mode
 	update = function(self, tiltFront, tiltLeft, compass, tiltUp)
 		
 		tiltUp = tiltUp or 0.25
