@@ -1,6 +1,7 @@
 require("Libs.Attitude")
 require("Libs.Quaternion")
 require("Libs.PID")
+require("Libs.Average")
 
 TIMELAG = property.getNumber("Time Lag Radar")
 
@@ -9,6 +10,8 @@ ATTITUDE_RADAR = Attitude:new(0, 0, 0)
 
 TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
+TARGET_G_POS_AVE = Average:new(5)
+TARGET_G_POS_AVE_P = Average:new(5)
 IS_TRACKING = false
 
 PIVOT_V = 0
@@ -22,22 +25,28 @@ function onTick()
 	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6), 0.25)
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 	local gPos = { 0, 0, 0 }
-	if input.getBool(1) and input.getBool(2) then--tracking on and target found
+	if input.getBool(1) and input.getBool(2) then --tracking on and target found
 		local lPos = { 0, 0, 0 }
 		gPos = ATTITUDE_RADAR:rotateVectorLocalToWorld(TARGET_POS)
 		if IS_TRACKING then
-			local gVel = { gPos[1] - TARGET_G_POS_P[1], gPos[2] - TARGET_G_POS_P[2], gPos[3] - TARGET_G_POS_P[3] }
+			local pos_now = TARGET_G_POS_AVE:getAveragedTable()
+			local pos_prev = TARGET_G_POS_AVE_P:getAveragedTable()
+			local gVel = { pos_now[1] - pos_prev[1], pos_now[2] - pos_prev[2], pos_now[3] - pos_prev[3] }
 			for i = 1, 3 do
-				gPos[i] = gPos[i] + gVel[i] * TIMELAG
+				gPos[i] = gPos[i] + gVel[i] * TIMELAG/2
 			end
 		end
-		local f = ATTITUDE_BASE:getFutureAttitude(0.0)
-		debug.log("TST: ,"..f.pitch..","..f.roll..","..f.yaw)
-		lPos = ATTITUDE_BASE:rotateVectorWorldToLocal(gPos)
+		TARGET_G_POS_AVE:update(gPos)
+		debug.log("TST:->," ..TARGET_G_POS_AVE:getAveragedTable()[1] .. "," .. TARGET_G_POS_AVE:getAveragedTable()[2] .. "," .. TARGET_G_POS_AVE:getAveragedTable()[3] .. ",")
+		lPos = ATTITUDE_BASE:getFutureAttitude(TIMELAG+1):rotateVectorWorldToLocal(TARGET_G_POS_AVE:getAveragedTable())
 		PIVOT_H, PIVOT_V = getAngle(lPos)
 		TARGET_G_POS_P = TARGET_POS
-		IS_TRACKING = true
-	else--manual radar operate
+		TARGET_G_POS_AVE_P = TARGET_G_POS_AVE
+		if TARGET_G_POS_AVE_P:isStockFull() then
+			IS_TRACKING = true
+		end
+	else --manual radar operate
+		TARGET_G_POS_AVE:resetTable()
 		if input.getNumber(15) == -1 then
 			PIVOT_H = PIVOT_H + INC
 		elseif input.getNumber(15) == 1 then
@@ -62,6 +71,7 @@ function clamp(value, max, min)
 	end
 	return value
 end
+
 function getAngle(vector)
 	local azimuth, elevation
 	azimuth = math.atan(vector[3], vector[1])
