@@ -16,7 +16,7 @@ IS_TRACKING = false
 
 PIVOT_V = 0
 PIVOT_H = 0
-PivotPID = PID:new(6, 0, 0.3, 0)
+PivotPID = PID:new(6, 0.005, 0.1, 0.05)
 
 INC = 0.005
 
@@ -33,12 +33,12 @@ function onTick()
 			local pos_prev = TARGET_G_POS_AVE_P:getAveragedTable()
 			local gVel = { pos_now[1] - pos_prev[1], pos_now[2] - pos_prev[2], pos_now[3] - pos_prev[3] }
 			for i = 1, 3 do
-				gPos[i] = gPos[i] + gVel[i] * TIMELAG/2
+				gPos[i] = gPos[i] + gVel[i] * (TIMELAG+6)
 			end
 		end
 		TARGET_G_POS_AVE:update(gPos)
 		debug.log("TST:->," ..TARGET_G_POS_AVE:getAveragedTable()[1] .. "," .. TARGET_G_POS_AVE:getAveragedTable()[2] .. "," .. TARGET_G_POS_AVE:getAveragedTable()[3] .. ",")
-		lPos = ATTITUDE_BASE:getFutureAttitude(TIMELAG+1):rotateVectorWorldToLocal(TARGET_G_POS_AVE:getAveragedTable())
+		lPos = ATTITUDE_BASE:getFutureAttitude(10):rotateVectorWorldToLocal(TARGET_G_POS_AVE:getAveragedTable())
 		PIVOT_H, PIVOT_V = getAngle(lPos)
 		TARGET_G_POS_P = TARGET_POS
 		TARGET_G_POS_AVE_P = TARGET_G_POS_AVE
@@ -59,8 +59,8 @@ function onTick()
 		end
 		IS_TRACKING = false
 	end
-	output.setNumber(1, PIVOT_V)
-	output.setNumber(2, PivotPID:update((PIVOT_H - input.getNumber(14) + 1.5) % 1 - 0.5, 0))
+	output.setNumber(31, PIVOT_V)
+	output.setNumber(32, PivotPID:update((PIVOT_H - input.getNumber(14) + 1.5) % 1 - 0.5, 0))
 end
 
 function clamp(value, max, min)
