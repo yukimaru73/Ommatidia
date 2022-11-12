@@ -24,6 +24,7 @@ Average = {
 		if #self.stock > self.length then
 			table.remove(self.stock, 1)
 		end
+		self.average = {}
 		for i = 1, #self.stock do
 			for k, v in pairs(self.stock[i]) do
 				if self.average[k] == nil then
@@ -50,7 +51,7 @@ Average = {
 	---@param self Average
 	resetTable = function(self)
 		self.stock = {}
-		self.average = {}
+		
 	end;
 	---@endsection
 

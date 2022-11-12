@@ -29,14 +29,12 @@ LMatrix = {
 		end
 		return LifeBoatAPI.lb_copy(cls, { row = row, col = col, mat = matmat })
 	end;
-	
+	--[[
 	---@param cls LMatrix
 	---@param array table
 	---@return LMatrix
 	newFromTable = function(cls, array)
-		local row = #array
-		local col = #array[1]
-		local matmat = {}
+		local row, col, matmat = #array, #array[1], {}
 		for i = 1, row do
 			matmat[i] = {}
 			for j = 1, col do
@@ -45,7 +43,7 @@ LMatrix = {
 		end
 		return LifeBoatAPI.lb_copy(cls, { row = row, col = col, mat = matmat })
 	end;
-
+	
 	---@param cls LMatrix
 	---@param array table
 	---@return LMatrix
@@ -57,7 +55,7 @@ LMatrix = {
 		end
 		return mat
 	end;
-
+	]]
 	---@section get
 	---@param self LMatrix
 	---@param row number
@@ -92,11 +90,10 @@ LMatrix = {
 	---@section copy
 	---@param self LMatrix
 	copy = function(self)
-		local a = self
-		local m = LMatrix:new(a.row, a.col)
-		for i = 1, a.row do
-			for j = 1, a.col do
-				m:set(i, j, a:get(i, j))
+		local m = LMatrix:new(self.row, self.col)
+		for i = 1, self.row do
+			for j = 1, self.col do
+				m:set(i, j, self:get(i, j))
 			end
 		end
 		return m
@@ -109,11 +106,10 @@ LMatrix = {
 	---@param mat LMatrix
 	---@return LMatrix
 	add = function(self, mat)
-		local a = self
-		local amat = LMatrix:new(a.row, a.col)
-		for ir = 1, a.row do
-			for ic = 1, a.col do
-				amat:set(ir, ic, a:get(ir, ic) + mat:get(ir, ic))
+		local amat = LMatrix:new(self.row, self.col)
+		for ir = 1, self.row do
+			for ic = 1, self.col do
+				amat:set(ir, ic, self:get(ir, ic) + mat:get(ir, ic))
 			end
 		end
 		return amat
@@ -159,19 +155,18 @@ LMatrix = {
 	---@param mat LMatrix
 	---@return LMatrix
 	dot = function(self, mat)
-		local a = self
-		local mmat = LMatrix:new(a.row, mat.col)
-		for ir = 1, a.row do
+		local mmat = LMatrix:new(self.row, mat.col)
+		for ir = 1, self.row do
 			for ic = 1, mat.col do
-				for ic2 = 1, a.col do
-					mmat:set(ir, ic, mmat:get(ir, ic) + a:get(ir, ic2) * mat:get(ic2, ic))
+				for ic2 = 1, self.col do
+					mmat:set(ir, ic, mmat:get(ir, ic) + self:get(ir, ic2) * mat:get(ic2, ic))
 				end
 			end
 		end
 		return mmat
 	end;
 	---@endsection
-
+	--[[
 	---@section cross
 	--- Calculate cross product of 2 matrix(A×B). A and B must be 3x1 matrix.
 	---@param self LMatrix A
@@ -185,6 +180,7 @@ LMatrix = {
 		mmat:set(3, 1, a:get(1, 1) * mat:get(2, 1) - a:get(2, 1) * mat:get(1, 1))
 		return mmat
 	end;
+	---@endsection
 
 	---@section rank
 	--- Get rank of a matrix.
@@ -306,23 +302,22 @@ LMatrix = {
 		return inv
 	end;
 	---@endsection
-
+	]]
 	---@section transpose
 	--- Calculate transpose of the Matrix (A^T).
 	---@param self LMatrix
 	---@return LMatrix
 	transpose = function(self)
-		local row, col = self.row, self.col
-		local t = LMatrix:new(col, row)
-		for i = 1, row do
-			for j = 1, col do
+		local t = LMatrix:new(self.col, self.row)
+		for i = 1, self.row do
+			for j = 1, self.col do
 				t:set(j, i, self:get(i, j))
 			end
 		end
 		return t
 	end;
 	---@endsection
-
+	--[[
 	---@section eigvals
 	--- Get eigenvalues of a matrix.
 	---@param self LMatrix
@@ -407,18 +402,14 @@ LMatrix = {
 		return eigvecs
 	end;
 	---@endsection
-
+	
 	---@section lu
 	---calculate LU decomposition of the Matrix with partial pivot (PA = LU).
 	---@param self LMatrix
 	---@return LMatrix P, LMatrix L, LMatrix U
 	lu = function(self)
 		local n = self.row
-		local pmat = LMatrix:new(n, n)
-		local lmat = LMatrix:new(n, n)
-		local umat = LMatrix:new(n, n)
-		local sweep = LMatrix:new(n, n)
-		local a = 0
+		local pmat, lmat, umat, sweep, a = LMatrix:new(n, n), LMatrix:new(n, n), LMatrix:new(n, n), LMatrix:new(n, n), 0
 		for i = 1, n do
 			for j = 1, n do
 				sweep:set(i, j, self:get(i, j))
@@ -432,8 +423,7 @@ LMatrix = {
 			end
 		end
 		for k = 1, n do
-			local max = math.abs(sweep:get(k, k))
-			local max_i = k
+			local max, max_i = math.abs(sweep:get(k, k)), k
 			for i = k + 1, n do
 				local b = math.abs(sweep:get(i, k))
 				if b > max then
@@ -467,23 +457,14 @@ LMatrix = {
 		return pmat, lmat, umat
 	end;
 	---@endsection
-
+	]]
 	---@section qr
 	--- Do QR decomposition(A(m*n)=Q(m*n)R(m*m)) with Householder transformation.
 	---@param self LMatrix
 	---@return LMatrix Q, LMatrix R
 	qr = function(self)
-		local sign = function(x)
-			if x >= 0 then
-				return 1
-			else
-				return -1
-			end
-		end
 		local m = self.row
-		local r = self:copy()
-		local q = LMatrix:new(m, m):eye()
-		local u = LMatrix:new(1, m)
+		local r, q, u = self:copy(), LMatrix:new(m, m):eye(), LMatrix:new(1, m)
 		for k = 1, m - 1 do
 			local absx = 0
 			for i = k, m do
@@ -491,7 +472,7 @@ LMatrix = {
 			end
 			absx = math.sqrt(absx)
 			if absx ~= 0 then
-				u:set(1, k, r:get(k, k) + sign(r:get(k, k)) * absx)
+				u:set(1, k, r:get(k, k) + (r:get(k, k)<0 and -1 or 1) * absx)
 				local absu = u:get(1, k) ^ 2
 				for i = k + 1, m do
 					u:set(1, i, r:get(i, k))
@@ -568,7 +549,7 @@ LMatrix = {
 		return x
 	end;
 	---@endsection
-
+	--[[
 	---@section norm
 	--- Get norm of a matrix.
 	---@param self LMatrix
@@ -584,6 +565,6 @@ LMatrix = {
 		return math.sqrt(norm)
 	end;
 	---@endsection
-	
+	]]
 }
 ---@endsection LMatrix 1 LMATRIX

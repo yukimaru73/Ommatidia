@@ -1,5 +1,5 @@
---require("LifeBoatAPI.Utils.LBCopy")
-require("Libs.LBCopy")
+require("LifeBoatAPI.Utils.LBCopy")
+--require("Libs.LBCopy")
 
 ---@section Quaternion 1 Quaternion  {x,y,z; w}
 ---@class Quaternion
@@ -20,8 +20,7 @@ Quaternion = {
 	---@param self Quaternion
 	---@return Quaternion
 	getConjugateQuaternion = function(self)
-		local q = self
-		return q:_new(-q.x, -q.y, -q.z, q.w)
+		return self:_new(-self.x, -self.y, -self.z, self.w)
 	end;
 	---@endsection
 
