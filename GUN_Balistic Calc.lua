@@ -121,7 +121,7 @@ function onTick()
 	if VALMAT:get(1, 1) > 0 and FLAG then
 		TICK, ELEV, AZIM = VALMAT:get(1, 1), VALMAT:get(2, 1), VALMAT:get(3, 1)
 		SOLVED = true
-		debug.log("TST:-> TICK: " .. TICK .. " ELEV: " .. 180*ELEV/math.pi .. " AZIM: " .. 180*AZIM/math.pi)
+		--debug.log("TST:-> TICK: " .. TICK .. " ELEV: " .. 180*ELEV/math.pi .. " AZIM: " .. 180*AZIM/math.pi)
 	else
 		SOLVED = false
 	end

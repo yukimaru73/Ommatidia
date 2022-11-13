@@ -10,8 +10,9 @@ ATTITUDE_RADAR = Attitude:new(0, 0, 0)
 
 TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
-TARGET_G_POS_AVE = Average:new(5)
-TARGET_G_VEL_AVE = Average:new(31)
+TARGET_G_POS_AVE = Average:new(7)
+TARGET_G_VEL_AVE = Average:new(61)
+LASER_DISTANCE = 0
 IS_TRACKING = false
 
 PIVOT_V = 0
@@ -23,6 +24,18 @@ INC = 0.005
 
 function onTick()
 	TARGET_POS = { input.getNumber(1), input.getNumber(2), input.getNumber(3) }
+	local distanceRadar = math.sqrt(TARGET_POS[1] ^ 2 + TARGET_POS[2] ^ 2 + TARGET_POS[3] ^ 2)
+	LASER_DISTANCE = input.getNumber(17) + 3
+	--debug.log("TST:-> DISTANCE: " .. distanceRadar)
+	--debug.log("TST:-> DIFF_DISTANCE: " .. (distanceRadar - LASER_DISTANCE))
+	if math.abs(distanceRadar - LASER_DISTANCE) < 10 then
+		local e, a
+		e = math.atan(TARGET_POS[2], math.sqrt(TARGET_POS[1] ^ 2 + TARGET_POS[3] ^ 2))
+		a = math.atan(TARGET_POS[3], TARGET_POS[1])
+		TARGET_POS = { LASER_DISTANCE * math.cos(e) * math.cos(a), LASER_DISTANCE * math.sin(e), LASER_DISTANCE * math.cos(e) * math.sin(a) }
+		--debug.log("TST:-> gotData")
+	end
+
 	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6), 0.25)
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 	local gPosRaw = { 0, 0, 0 }
@@ -42,7 +55,6 @@ function onTick()
 			TARGET_G_VEL_AVE:update(gVel)
 			for i = 1, 3 do
 				if TARGET_G_VEL_AVE:isStockFull() then
-					local gVelNorm = math.sqrt(gVel[1] ^ 2 + gVel[2] ^ 2 + gVel[3] ^ 2)
 					gPosFuture[i] = averagedTargetPos[i] + TARGET_G_VEL_AVE:getAveragedTable()[i] * TIMELAG
 				else
 					gPosFuture[i] = averagedTargetPos[i]
@@ -79,7 +91,7 @@ function onTick()
 	output.setNumber(8, ATTITUDE_BASE.rotation.y)
 	output.setNumber(9, ATTITUDE_BASE.rotation.z)
 	output.setNumber(10, ATTITUDE_BASE.rotation.w)
-	
+
 	output.setBool(1, IS_TRACKING)
 
 	output.setNumber(31, PIVOT_V)
