@@ -1,5 +1,5 @@
---require("LifeBoatAPI.Utils.LBCopy")
-require("Libs.LBCopy")
+require("LifeBoatAPI.Utils.LBCopy")
+--require("Libs.LBCopy")
 require("Libs.Quaternion")
 
 ---@section Attitude 1 Attitude

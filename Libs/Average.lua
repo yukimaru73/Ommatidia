@@ -1,4 +1,5 @@
 
+require("LifeBoatAPI.Utils.LBCopy")
 
 ---@class Average 1 Average
 ---@field length number
@@ -7,12 +8,17 @@
 Average = {
 	---@param cls Average
 	---@param length number
+	---@param tableNumber number
 	---@return Average
-	new = function(cls, length)
+	new = function(cls, length, tableNumber)
+		local a = {}
+		for i = 1, tableNumber do
+			a[i] = 0
+		end
 		return LifeBoatAPI.lb_copy(cls, {
 			length = length,
 			stock = {},
-			average = {}
+			average = a
 		})
 	end;
 

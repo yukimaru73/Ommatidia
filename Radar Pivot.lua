@@ -3,17 +3,30 @@ require("Libs.Quaternion")
 require("Libs.PID")
 require("Libs.Average")
 
+function createTableFromString(str)
+	local t, num = {}, nil
+	for w in string.gmatch(str, "[-0-9.]+") do
+		num = tonumber(w)
+		if num ~= nil then
+			t[#t + 1] = tonumber(num)
+		end
+	end
+	return t
+end
+
 TIMELAG = property.getNumber("Time Lag Radar")
 PURE_TIMELAG = property.getNumber("Pure Time Lag")
 VELOCITY_AVERAGING_TICK = property.getNumber("Velocity Averaging Tick")
+GPS_POSITION_DIFF = createTableFromString(property.getText("GPS Position Diff"))
+ALTITUDE_POSITION_DIFF = createTableFromString(property.getText("Altitude Position Diff"))
 
 ATTITUDE_BASE = Attitude:new(0, 0, 0)
 ATTITUDE_RADAR = Attitude:new(0, 0, 0)
 
 TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
-TARGET_G_POS_AVE = Average:new(TIMELAG * 2 + 1)
-TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK)
+TARGET_G_POS_AVE = Average:new(TIMELAG * 2 + 1, 3)
+TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK, 3)
 IS_TRACKING = false
 
 PIVOT_V = 0
@@ -26,13 +39,16 @@ function onTick()
 	TARGET_POS = { input.getNumber(1), input.getNumber(2), input.getNumber(3) }
 	local distance, laserDistance = math.sqrt(TARGET_POS[1] ^ 2 + TARGET_POS[2] ^ 2 + TARGET_POS[3] ^ 2),
 		input.getNumber(17)
-	if laserDistance ~= 4000 and math.abs(distance - laserDistance + 2) < 8 then
-		local a, e = getAngle(TARGET_POS)
+	if (laserDistance ~= 4000) and (math.abs(distance - laserDistance + 2) < 8) then
+		local a, e = positionToRadian(TARGET_POS)
 		TARGET_POS = { distance * math.cos(e) * math.cos(a), distance * math.sin(e), distance * math.cos(e) * math.sin(a) }
 	end
 	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6), 0.25)
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 	local gPosRaw, gPosFuture, gVel = { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }
+	local gpsPos, altPos = ATTITUDE_BASE:rotateVectorLocalToWorld(GPS_POSITION_DIFF),
+		ATTITUDE_BASE:rotateVectorLocalToWorld(ALTITUDE_POSITION_DIFF)
+	local radarGPS = { input.getNumber(11) - gpsPos[1], input.getNumber(12) - altPos[2], input.getNumber(13) - gpsPos[3] }
 	if input.getBool(1) and input.getBool(2) then --tracking on and target found
 		local lPos = { 0, 0, 0 }
 		gPosRaw = ATTITUDE_RADAR:rotateVectorLocalToWorld(TARGET_POS)
@@ -51,9 +67,8 @@ function onTick()
 			end
 		end
 		lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(gPosFuture)
-		PIVOT_H, PIVOT_V = getAngle(lPos)
-		PIVOT_H = PIVOT_H / 2 / math.pi
-		PIVOT_V = 2 * PIVOT_V / math.pi
+		PIVOT_H, PIVOT_V = positionToRadian(lPos)
+		PIVOT_H, PIVOT_V = PIVOT_H / math.pi / 2, 2 * PIVOT_V / math.pi
 		TARGET_G_POS_P = gPosRaw
 		IS_TRACKING = true
 	else --manual radar operate
@@ -73,16 +88,12 @@ function onTick()
 		IS_TRACKING = false
 	end
 	for i = 1, 3 do
-		output.setNumber(i, TARGET_G_POS_AVE:getAveragedTable()[i])
-		output.setNumber(i + 3, TARGET_G_VEL_AVE:getAveragedTable()[i])
+		output.setNumber(i + 3, radarGPS[i] + TARGET_G_POS_AVE:getAveragedTable()[i])
+		output.setNumber(i + 6, TARGET_G_VEL_AVE:getAveragedTable()[i])
 	end
-	output.setNumber(7, ATTITUDE_BASE.rotation.x)
-	output.setNumber(8, ATTITUDE_BASE.rotation.y)
-	output.setNumber(9, ATTITUDE_BASE.rotation.z)
-	output.setNumber(10, ATTITUDE_BASE.rotation.w)
-
 	output.setBool(1, IS_TRACKING)
 
+	output.setNumber(30, distance)
 	output.setNumber(31, PIVOT_V)
 	output.setNumber(32, PivotPID:update((PIVOT_H - input.getNumber(14) + 1.5) % 1 - 0.5, 0))
 end
@@ -100,7 +111,7 @@ end
 ---@param vector table
 ---@return number azimuth
 ---@return number elevation
-function getAngle(vector)
+function positionToRadian(vector)
 	local azimuth, elevation
 	azimuth = math.atan(vector[3], vector[1])
 	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))

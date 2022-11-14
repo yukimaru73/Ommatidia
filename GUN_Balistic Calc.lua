@@ -40,7 +40,6 @@ end
 ---@endsection
 
 ---@section Balistic 1 Balistic
----@param x LMatrix
 ---@param gX number
 ---@param gY number
 ---@param gZ number
@@ -100,7 +99,7 @@ function onTick()
 			input.getNumber(9),
 			property.getNumber("Muzzle Velocity"),
 			property.getNumber("Air Resistance"),
-			17,--timelag
+			18,--timelag
 			0.7,
 			30,
 			0.01
