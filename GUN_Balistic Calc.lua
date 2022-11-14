@@ -56,27 +56,17 @@ end
 ---@param dt number
 ---@param im number
 ---@param em number
----@param cont boolean
-function Balistic(gX, gY, gZ, tX, tY, tZ, Vx, Vy, Vz, V0, d, L, dt, im, em, cont, x)
+function Balistic(gX, gY, gZ, tX, tY, tZ, Vx, Vy, Vz, V0, d, L, dt, im, em)
 	local p0, v0, f = LMatrix:new(3, 1), LMatrix:new(3, 1), false
-	if cont then
-		v0 = x
-	else
-		local pt = math.sqrt((tX - gX) ^ 2 + (tY - gY) ^ 2 + (tZ - gZ) ^ 2) / (V0 / 60)
-		v0:set(1, 1, pt)
-		v0:set(2, 1, math.atan(tY - gY + Vy * pt, math.sqrt((tX - gX + Vx * pt) ^ 2 + (tZ - gZ + Vz * pt) ^ 2)))
-		v0:set(3, 1, math.atan(tZ - gZ + Vz * pt,tX - gX + Vx * pt))
-	end
+	local pt = math.sqrt((tX - gX) ^ 2 + (tY - gY) ^ 2 + (tZ - gZ) ^ 2) / (V0 / 60)
+	v0:set(1, 1, pt)
+	v0:set(2, 1, math.atan(tY - gY + Vy * pt, math.sqrt((tX - gX + Vx * pt) ^ 2 + (tZ - gZ + Vz * pt) ^ 2)))
+	v0:set(3, 1, math.atan(tZ - gZ + Vz * pt,tX - gX + Vx * pt))
 	local F0, J0 = LMatrix:new(3, 1), LMatrix:new(3, 3)
 	for i = 1, im do
 		F0, J0 = FJ(gX, gY, gZ, tX, tY, tZ, Vx, Vy, Vz, V0, d, L, v0:get(1, 1), v0:get(2, 1), v0:get(3, 1), F0, J0)
 		local er = 0
-		for k = 1, 3 do
-			local er2 = math.abs(F0:get(k, 1))
-			if er < er2 then
-				er = er2
-			end
-		end
+		er = F0:norm()
 		if er < em then
 			f = true
 			break
@@ -113,15 +103,13 @@ function onTick()
 			17,--timelag
 			0.7,
 			30,
-			0.01,
-			false,
-			VALMAT
+			0.01
 		)
 	end
 	if VALMAT:get(1, 1) > 0 and FLAG then
 		TICK, ELEV, AZIM = VALMAT:get(1, 1), VALMAT:get(2, 1), VALMAT:get(3, 1)
 		SOLVED = true
-		debug.log("TST:-> TICK: " .. TICK .. " ELEV: " .. 180*ELEV/math.pi .. " AZIM: " .. 180*AZIM/math.pi)
+		--debug.log("TST:-> TICK: " .. TICK .. " ELEV: " .. 180*ELEV/math.pi .. " AZIM: " .. 180*AZIM/math.pi)
 	else
 		SOLVED = false
 	end
