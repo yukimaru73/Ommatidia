@@ -1,5 +1,7 @@
 require("Libs.LightMatrix")
 
+ADDITIONAL_DATA_LAG = property.getNumber("Additional Data Lag")
+
 ---@section FJ 1 FJ
 ---@param mf LMatrix
 ---@param mj LMatrix
@@ -86,7 +88,6 @@ function onTick()
 	if not input.getBool(1) then
 		FLAG = false
 	else
-		--debug.log("TST:-> Calculate X: "..input.getNumber(4).." Y: "..input.getNumber(5).." Z: "..input.getNumber(6))
 		VALMAT, FLAG = Balistic(
 			input.getNumber(1),
 			input.getNumber(2),
@@ -99,7 +100,7 @@ function onTick()
 			input.getNumber(9),
 			property.getNumber("Muzzle Velocity"),
 			property.getNumber("Air Resistance"),
-			18,--timelag
+			18 + ADDITIONAL_DATA_LAG,--timelag
 			0.7,
 			30,
 			0.01
@@ -108,7 +109,6 @@ function onTick()
 	if VALMAT:get(1, 1) > 0 and FLAG then
 		TICK, ELEV, AZIM = VALMAT:get(1, 1), VALMAT:get(2, 1), VALMAT:get(3, 1)
 		SOLVED = true
-		--debug.log("TST:-> TICK: " .. TICK .. " ELEV: " .. 180*ELEV/math.pi .. " AZIM: " .. 180*AZIM/math.pi)
 	else
 		SOLVED = false
 	end

@@ -18,7 +18,7 @@ function onTick()
 		PIVOT_H, PIVOT_V = positionToRadian(posL)
 
 	end
-	output.setNumber(1, PivotPID:update((PIVOT_H - input.getNumber(14) + 1.5) % 1 - 0.5, 0))
+	output.setNumber(1, PivotPID:update((PIVOT_H - input.getNumber(7) + 1.5) % 1 - 0.5, 0))
 	output.setNumber(2, 4 * PIVOT_V)
 end
 
