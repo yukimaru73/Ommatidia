@@ -27,6 +27,8 @@ TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
 TARGET_G_POS_AVE = Average:new(TIMELAG * 2 + 1, 3)
 TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK * 2 + 1, 3)
+SELF_GPS_POS_P = { 0, 0, 0 }
+SELF_GPS_SPEED = { 0, 0, 0 }
 IS_TRACKING = false
 
 PIVOT_V = 0
@@ -48,9 +50,11 @@ function onTick()
 	ATTITUDE_BASE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6))
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 	local gPosRaw, gPosFuture, gVel = { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }
-	local gpsPos, altPos = ATTITUDE_BASE:rotateVectorLocalToWorld(GPS_POSITION_DIFF),
-		ATTITUDE_BASE:rotateVectorLocalToWorld(ALTITUDE_POSITION_DIFF)
-	local radarGPS = { input.getNumber(11) - gpsPos[1], input.getNumber(12) - altPos[2], input.getNumber(13) - gpsPos[3] }
+	local gpsPos, altPos, selfGPS  = ATTITUDE_BASE:rotateVectorLocalToWorld(GPS_POSITION_DIFF),
+		ATTITUDE_BASE:rotateVectorLocalToWorld(ALTITUDE_POSITION_DIFF),
+		{input.getNumber(11), input.getNumber(12), input.getNumber(13)}
+	local radarGPS = {selfGPS[1] - gpsPos[1], selfGPS[2] - altPos[2], selfGPS[3] - gpsPos[3]}
+	SELF_GPS_SPEED = {selfGPS[1] - SELF_GPS_POS_P[1], selfGPS[2] - SELF_GPS_POS_P[2], selfGPS[3] - SELF_GPS_POS_P[3]}
 	if input.getBool(1) and input.getBool(2) then --tracking on and target found
 		local lPos = { 0, 0, 0 }
 		gPosRaw = ATTITUDE_RADAR:rotateVectorLocalToWorld(TARGET_POS)
@@ -58,7 +62,11 @@ function onTick()
 		local averagedTargetPos = TARGET_G_POS_AVE:getAveragedTable()
 
 		if IS_TRACKING then
-			gVel = { gPosRaw[1] - TARGET_G_POS_P[1], gPosRaw[2] - TARGET_G_POS_P[2], gPosRaw[3] - TARGET_G_POS_P[3] }
+			gVel = {
+				gPosRaw[1] + SELF_GPS_SPEED[1] - TARGET_G_POS_P[1],
+				gPosRaw[2] + SELF_GPS_SPEED[2] - TARGET_G_POS_P[2],
+				gPosRaw[3] + SELF_GPS_SPEED[3] - TARGET_G_POS_P[3]
+			}
 			TARGET_G_VEL_AVE:update(gVel)
 			for i = 1, 3 do
 				if TARGET_G_VEL_AVE:isStockFull() then
@@ -69,7 +77,7 @@ function onTick()
 			end
 			lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(gPosFuture)
 		else
-			lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(TARGET_G_POS_AVE:getAveragedTable())
+			lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(TARGET_G_POS_P)
 		end
 		
 		PIVOT_H, PIVOT_V = positionToRadian(lPos)
@@ -101,6 +109,7 @@ function onTick()
 	output.setNumber(30, TARGET_G_POS_AVE:getAveragedTable()[2])
 	output.setNumber(31, PIVOT_V)
 	output.setNumber(32, PivotPID:update((PIVOT_H - input.getNumber(14) + 1.5) % 1 - 0.5, 0))
+	SELF_GPS_POS_P = selfGPS
 end
 
 function clamp(value, max, min)
