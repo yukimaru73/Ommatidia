@@ -1,4 +1,6 @@
 require("Libs.Attitude")
+SELF_GPS_POS_P = { 0, 0, 0 }
+SELF_GPS_SPEED= {0,0,0}
 
 function createTableFromString(str)
 	local t, num = {}, nil
@@ -23,17 +25,24 @@ function onTick()
 	GUN_POS[1] = input.getNumber(17) - gpsPos[1]
 	GUN_POS[2] = input.getNumber(18) - altPos[2]
 	GUN_POS[3] = input.getNumber(19) - gpsPos[3]
+	local selfGPSPos = {input.getNumber(17), input.getNumber(18), input.getNumber(19)}
+	SELF_GPS_SPEED[1] = (selfGPSPos[1] - SELF_GPS_POS_P[1]) * 60
+	SELF_GPS_SPEED[2] = (selfGPSPos[2] - SELF_GPS_POS_P[2]) * 60
+	SELF_GPS_SPEED[3] = (selfGPSPos[3] - SELF_GPS_POS_P[3]) * 60
+
+	SELF_GPS_POS_P = selfGPSPos
+
 	
 	output.setBool(1,input.getBool(1))
 
 	output.setNumber(1, GUN_POS[1])
 	output.setNumber(2, GUN_POS[2])
 	output.setNumber(3, GUN_POS[3])
-	for i = 4, 12 do
-		output.setNumber(i, input.getNumber(i))
+	for i = 1, 3 do
+		output.setNumber(i+3, input.getNumber(i+3))
+		output.setNumber(i+6, SELF_GPS_SPEED[i])
+		output.setNumber(i+9, input.getNumber(i+9))
+		output.setNumber(i+12, input.getNumber(i+12))
 	end
-	output.setNumber(13, input.getNumber(13))
-	output.setNumber(14, input.getNumber(14))
-	output.setNumber(15, input.getNumber(15))
 	output.setNumber(16, input.getNumber(16))
 end

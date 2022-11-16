@@ -77,7 +77,7 @@ function onTick()
 			end
 			lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(gPosFuture)
 		else
-			lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(TARGET_G_POS_P)
+			lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(TARGET_G_POS_AVE:getAveragedTable())
 		end
 		
 		PIVOT_H, PIVOT_V = positionToRadian(lPos)
@@ -102,7 +102,6 @@ function onTick()
 	end
 	for i = 1, 3 do
 		output.setNumber(i + 3, radarGPS[i] + TARGET_G_POS_AVE:getAveragedTable()[i])
-		output.setNumber(i + 6, SELF_GPS_SPEED[i]*60)
 		output.setNumber(i + 9, TARGET_G_VEL_AVE:getAveragedTable()[i])
 		
 	end
