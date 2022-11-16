@@ -9,7 +9,7 @@ PivotPID = PID:new(5, 0.007, 0.1, 0.05)
 
 function onTick()
 	
-	GUN_BASE_ATTITUDE:update(input.getNumber(4), input.getNumber(5), input.getNumber(6), 0.25)
+	GUN_BASE_ATTITUDE:update(input.getNumber(14), input.getNumber(15), input.getNumber(16), 0.25)
 
 	if input.getBool(1) then
 		local t, e, a = input.getNumber(1), input.getNumber(2), input.getNumber(3)
@@ -18,7 +18,7 @@ function onTick()
 		PIVOT_H, PIVOT_V = positionToRadian(posL)
 
 	end
-	output.setNumber(1, PivotPID:update((PIVOT_H - input.getNumber(7) + 1.5) % 1 - 0.5, 0))
+	output.setNumber(1, PivotPID:update((PIVOT_H - input.getNumber(13) + 1.5) % 1 - 0.5, 0))
 	output.setNumber(2, 4 * PIVOT_V)
 end
 
