@@ -102,7 +102,7 @@ function onTick()
 	end
 	for i = 1, 3 do
 		output.setNumber(i + 3, radarGPS[i] + TARGET_G_POS_AVE:getAveragedTable()[i])
-		output.setNumber(i + 6, SELF_GPS_SPEED[i])
+		output.setNumber(i + 6, SELF_GPS_SPEED[i]*60)
 		output.setNumber(i + 9, TARGET_G_VEL_AVE:getAveragedTable()[i])
 		
 	end
