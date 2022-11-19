@@ -15,9 +15,10 @@ PIVOT_V = 0
 PivotPID = PID:new(20, 0.005, 0.3, 0.08)
 
 function onTick()
-
+	---update self attitude
 	GUN_BASE_ATTITUDE:update(input.getNumber(14), input.getNumber(15), input.getNumber(16), 0.25)
 
+	---if balistic calculator is solved, get pivot angle
 	if input.getBool(1) then
 		local t, e, a = input.getNumber(1), input.getNumber(2), input.getNumber(3)
 		local pos = angleToPosition(a, e)
@@ -25,7 +26,8 @@ function onTick()
 		PIVOT_H, PIVOT_V = positionToRadian(posL)
 
 	end
-	output.setNumber(3, PIVOT_H)
+
+	---output pivot angle
 	if IS_HORIZONTAL_PIVOT_VELOCITY then
 		PIVOT_H = clamp(PivotPID:update((clamp(PIVOT_H, MINIMUM_HORIZONTAL_ANGLE, MAXIMUM_HORIZONTAL_ANGLE) - input.getNumber(13) + 1.5) % 1 - 0.5, 0), -0.37, 0.37)
 	else
