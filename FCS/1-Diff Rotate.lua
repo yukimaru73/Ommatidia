@@ -32,8 +32,16 @@ function onTick()
 
 	SELF_GPS_POS_P = selfGPSPos
 
+	local dx, dy, dz = GUN_POS[1] - input.getNumber(4), GUN_POS[2] - input.getNumber(5), GUN_POS[3] - input.getNumber(6)
+	local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
+	if distance < 10 then
+		output.setBool(1,false)
+	else
+		output.setBool(1,input.getBool(1))
+	end
+
 	
-	output.setBool(1,input.getBool(1))
+	
 
 	output.setNumber(1, GUN_POS[1])
 	output.setNumber(2, GUN_POS[2])
