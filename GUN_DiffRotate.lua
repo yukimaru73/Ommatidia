@@ -45,4 +45,5 @@ function onTick()
 		output.setNumber(i+12, input.getNumber(i+12))
 	end
 	output.setNumber(16, input.getNumber(16))
+	output.setNumber(20, input.getNumber(20))
 end

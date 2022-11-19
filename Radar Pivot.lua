@@ -103,8 +103,8 @@ function onTick()
 	for i = 1, 3 do
 		output.setNumber(i + 3, radarGPS[i] + TARGET_G_POS_AVE:getAveragedTable()[i])
 		output.setNumber(i + 9, TARGET_G_VEL_AVE:getAveragedTable()[i])
-		
 	end
+	output.setNumber(20, TIMELAG + PURE_TIMELAG)
 	output.setBool(1, IS_TRACKING)
 
 	output.setNumber(30, TARGET_G_POS_AVE:getAveragedTable()[2])

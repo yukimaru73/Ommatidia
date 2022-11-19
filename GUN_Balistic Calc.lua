@@ -103,7 +103,7 @@ function onTick()
 			input.getNumber(12),
 			property.getNumber("Muzzle Velocity"),
 			property.getNumber("Air Resistance"),
-			18 + ADDITIONAL_DATA_LAG,--timelag
+			input.getNumber(20) + 5 + ADDITIONAL_DATA_LAG,--timelag
 			0.7,
 			30,
 			0.01
@@ -118,6 +118,7 @@ function onTick()
 	output.setNumber(1, TICK)
 	output.setNumber(2, ELEV)
 	output.setNumber(3, AZIM)
+	output.setNumber(4, input.getNumber(17))
 
 	output.setBool(1, SOLVED)
 
