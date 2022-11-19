@@ -2,6 +2,7 @@ require("Libs.LightMatrix")
 
 ADDITIONAL_DATA_LAG = property.getNumber("Additional Data Lag")
 
+---calculate bullet position at the time and which jacobian matrix to use
 ---@section FJ 1 FJ
 ---@param mf LMatrix
 ---@param mj LMatrix
@@ -41,6 +42,8 @@ end
 
 ---@endsection
 
+---Balistic Solver using W4LH method
+---W4 method documentation: https://hir0ok.github.io/w4/index.html
 ---@section Balistic 1 Balistic
 ---@param gX number
 ---@param gY number
