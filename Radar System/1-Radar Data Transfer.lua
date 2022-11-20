@@ -23,16 +23,18 @@ function onTick()
 
 	---calculate the average position of near targets
 	if #INPUT_TARGETS ~= 0 then
-		for i = 1, #INPUT_TARGETS do
-			for j = #INPUT_TARGETS, i + 1, -1 do
-				local noize_distance = BASE_DISTANCE * (INPUT_TARGETS[i][3] + INPUT_TARGETS[j][3]) * 0.005
-				if Vector3.getDistanceBetween2Vectors(INPUT_TARGETS[i][1], INPUT_TARGETS[j][1]) < noize_distance then
-					INPUT_TARGETS[i][2][#INPUT_TARGETS[i][2] + 1] = j
-					INPUT_TARGETS[j][2][#INPUT_TARGETS[j][2] + 1] = i
+		if #INPUT_TARGETS>1 then
+			for i = 1, #INPUT_TARGETS do
+				for j = #INPUT_TARGETS, i + 1, -1 do
+					local noize_distance = BASE_DISTANCE * (INPUT_TARGETS[i][3] + INPUT_TARGETS[j][3]) * 0.005
+					if Vector3.getDistanceBetween2Vectors(INPUT_TARGETS[i][1], INPUT_TARGETS[j][1]) < noize_distance then
+						INPUT_TARGETS[i][2][#INPUT_TARGETS[i][2] + 1] = j
+						INPUT_TARGETS[j][2][#INPUT_TARGETS[j][2] + 1] = i
+					end
 				end
 			end
+			table.sort(INPUT_TARGETS, function(a, b) return #a[2] > #b[2] end)
 		end
-		table.sort(INPUT_TARGETS, function(a, b) return #a[2] > #b[2] end)
 		x,y,z = INPUT_TARGETS[1][1].x, INPUT_TARGETS[1][1].y, INPUT_TARGETS[1][1].z
 		for i, v in ipairs(INPUT_TARGETS[1][2]) do
 			x = x + INPUT_TARGETS[v][1].x

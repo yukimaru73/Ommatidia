@@ -44,6 +44,7 @@ Vector3 = {
 		self.y = t[2]
 		self.z = t[3]
 	end;
+	---@endsection
 
 	---@section getNorm
 	---@param self Vector3

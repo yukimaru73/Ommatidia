@@ -1,10 +1,18 @@
 require("Libs.Attitude")
 require("Libs.PID")
+require("Libs.UpDownCounter")
 
-MAXIMUM_HORIZONTAL_ANGLE = -property.getNumber("Minimum Horizontal Angle") / 360
-MAXIMUM_VERTICAL_ANGLE = property.getNumber("Maximum Vertical Angle") / 90
-MINIMUM_HORIZONTAL_ANGLE = -property.getNumber("Maximum Horizontal Angle") / 360
-MINIMUM_VERTICAL_ANGLE = property.getNumber("Minimum Vertical Angle") / 90
+MAXIMUM_HORIZONTAL_ANGLE = -property.getNumber("Max Left Horizontal Angle") / 360
+MAXIMUM_VERTICAL_ANGLE = property.getNumber("Max Vertical Angle") / 90
+MINIMUM_HORIZONTAL_ANGLE = -property.getNumber("Max Right Horizontal Angle") / 360
+MINIMUM_VERTICAL_ANGLE = property.getNumber("Min Vertical Angle") / 90
+HORIZONTAL_SPEED = property.getNumber("Horizontal Speed") / 100
+VERTICAL_SPEED = property.getNumber("Vertical Speed") / 100
+
+HORIZONTAL_CONTINUOUS = (MAXIMUM_HORIZONTAL_ANGLE + MINIMUM_HORIZONTAL_ANGLE == 0) and (MAXIMUM_HORIZONTAL_ANGLE == 0.5)
+
+HORIZONTAL_UDC = UpDownCounter:new(HORIZONTAL_SPEED/100, MINIMUM_HORIZONTAL_ANGLE*4, MAXIMUM_HORIZONTAL_ANGLE*4)
+VERTICAL_UDC = UpDownCounter:new(VERTICAL_SPEED/100, MINIMUM_VERTICAL_ANGLE, MINIMUM_VERTICAL_ANGLE)
 
 IS_HORIZONTAL_PIVOT_VELOCITY = property.getBool("Horizontal Pivot")
 
@@ -30,14 +38,18 @@ function onTick()
 
 	---output pivot angle
 	if IS_HORIZONTAL_PIVOT_VELOCITY then
-		local clampedHorizontal = clamp(PIVOT_H, MINIMUM_HORIZONTAL_ANGLE, MAXIMUM_HORIZONTAL_ANGLE)
-		local pidValue = PivotPID:update((clampedHorizontal - input.getNumber(13) + 1.5) % 1 - 0.5, 0)
-		PIVOT_H_OUT = clamp(pidValue, -0.37, 0.37)
+		local clampedHorizontal, pidValue = clamp(PIVOT_H, MINIMUM_HORIZONTAL_ANGLE, MAXIMUM_HORIZONTAL_ANGLE), 0
+		if HORIZONTAL_CONTINUOUS then
+			pidValue = PivotPID:update((clampedHorizontal - input.getNumber(13) + 1.5) % 1 - 0.5, 0)
+		else
+			pidValue = PivotPID:update(clampedHorizontal - input.getNumber(13), 0)
+		end
+		PIVOT_H_OUT = clamp(pidValue, -HORIZONTAL_SPEED, HORIZONTAL_SPEED)
 	else
-		PIVOT_H_OUT = clamp(4 * PIVOT_H, MINIMUM_HORIZONTAL_ANGLE * 4, MAXIMUM_HORIZONTAL_ANGLE * 4)
+		PIVOT_H_OUT = HORIZONTAL_UDC:update(PIVOT_H*4)
 	end
 	output.setNumber(1,PIVOT_H_OUT)
-	output.setNumber(2, clamp(4 * PIVOT_V, MINIMUM_VERTICAL_ANGLE, MAXIMUM_VERTICAL_ANGLE))
+	output.setNumber(2, VERTICAL_UDC:update(PIVOT_V*4))
 end
 
 function angleToPosition(azimuth, elevation)
