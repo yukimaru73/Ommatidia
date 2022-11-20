@@ -2,11 +2,12 @@ require("Libs.Attitude")
 require("Libs.Quaternion")
 require("Libs.PID")
 require("Libs.Average")
+require("Libs.RC_Filter")
 
 function createTableFromString(str)
-	local t, num = {}, nil
+	local t = {}
 	for w in string.gmatch(str, "[-0-9.]+") do
-		num = tonumber(w)
+		local num = tonumber(w)
 		if num ~= nil then
 			t[#t + 1] = tonumber(num)
 		end
@@ -14,9 +15,25 @@ function createTableFromString(str)
 	return t
 end
 
+function clamp(value, max, min)
+	if value < min then
+		value = min
+	elseif value > max then
+		value = max
+	end
+	return value
+end
+
+function positionToRadian(vector)
+	local azimuth, elevation
+	azimuth = math.atan(vector[3], vector[1])
+	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
+	return azimuth, elevation
+end
+
 TIMELAG = property.getNumber("Position Averaging Tick")
 PURE_TIMELAG = 10
-VELOCITY_AVERAGING_TICK = property.getNumber("Velocity Averaging Tick")
+--VELOCITY_AVERAGING_TICK = property.getNumber("Velocity Averaging Tick")
 GPS_POSITION_DIFF = createTableFromString(property.getText("GPS Position Diff"))
 ALTITUDE_POSITION_DIFF = createTableFromString(property.getText("Altitude Position Diff"))
 
@@ -26,7 +43,8 @@ ATTITUDE_RADAR = Attitude:new(0, 0, 0)
 TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
 TARGET_G_POS_AVE = Average:new(TIMELAG * 2 + 1, 3)
-TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK * 2 + 1, 3)
+--TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK * 2 + 1, 3)
+TARGET_G_VEL_F = RC_Filter:new(0.955, 3)
 SELF_GPS_POS_P = { 0, 0, 0 }
 SELF_GPS_SPEED = { 0, 0, 0 }
 IS_TRACKING = false
@@ -35,7 +53,7 @@ PIVOT_V = 0
 PIVOT_H = 0
 PivotPID = PID:new(7, 0.007, 0.2, 0.05)
 
-INC = property.getNumber("Rotate Sensitivity")/10000
+INC = property.getNumber("Rotate Sensitivity") * .0001
 
 function onTick()
 	---zero initialization
@@ -45,7 +63,8 @@ function onTick()
 	TARGET_POS = { input.getNumber(1), input.getNumber(2), input.getNumber(3) }
 
 	---use laser distance if available.
-	local distance, laserDistance = math.sqrt(TARGET_POS[1] ^ 2 + TARGET_POS[2] ^ 2 + TARGET_POS[3] ^ 2), input.getNumber(17)
+	local distance, laserDistance = math.sqrt(TARGET_POS[1] ^ 2 + TARGET_POS[2] ^ 2 + TARGET_POS[3] ^ 2),
+		input.getNumber(17)
 	if (laserDistance ~= 4000) and (math.abs(distance - laserDistance + 2) < 8) then
 		local a, e = positionToRadian(TARGET_POS)
 		TARGET_POS = { distance * math.cos(e) * math.cos(a), distance * math.sin(e), distance * math.cos(e) * math.sin(a) }
@@ -56,15 +75,15 @@ function onTick()
 	ATTITUDE_RADAR:update(input.getNumber(7), input.getNumber(8), input.getNumber(9), input.getNumber(10))
 
 	---rotate self attitude
-	local gpsPos, altPos, selfGPS  = 
-		ATTITUDE_BASE:rotateVectorLocalToWorld(GPS_POSITION_DIFF),
+	local gpsPos, altPos, selfGPS =
+	ATTITUDE_BASE:rotateVectorLocalToWorld(GPS_POSITION_DIFF),
 		ATTITUDE_BASE:rotateVectorLocalToWorld(ALTITUDE_POSITION_DIFF),
-		{input.getNumber(11), input.getNumber(12), input.getNumber(13)}
+		{ input.getNumber(11), input.getNumber(12), input.getNumber(13) }
 
 	---calculate target position in global coordinate
-	local radarGPS = {selfGPS[1] - gpsPos[1], selfGPS[2] - altPos[2], selfGPS[3] - gpsPos[3]}
-	SELF_GPS_SPEED = {selfGPS[1] - SELF_GPS_POS_P[1], selfGPS[2] - SELF_GPS_POS_P[2], selfGPS[3] - SELF_GPS_POS_P[3]}
-	
+	local radarGPS = { selfGPS[1] - gpsPos[1], selfGPS[2] - altPos[2], selfGPS[3] - gpsPos[3] }
+	SELF_GPS_SPEED = { selfGPS[1] - SELF_GPS_POS_P[1], selfGPS[2] - SELF_GPS_POS_P[2], selfGPS[3] - SELF_GPS_POS_P[3] }
+
 	if input.getBool(1) and input.getBool(2) then ---tracking mode
 
 		local lPos = { 0, 0, 0 }
@@ -72,20 +91,20 @@ function onTick()
 		TARGET_G_POS_AVE:update(gPosRaw)
 		local averagedTargetPos = TARGET_G_POS_AVE:getAveragedTable()
 
-		if IS_TRACKING then ---if tracking is continuous 
+		if IS_TRACKING then ---if tracking is continuous
 			---calculate target speed
-			gVel = {
-				gPosRaw[1] + SELF_GPS_SPEED[1] - TARGET_G_POS_P[1],
-				gPosRaw[2] + SELF_GPS_SPEED[2] - TARGET_G_POS_P[2],
-				gPosRaw[3] + SELF_GPS_SPEED[3] - TARGET_G_POS_P[3]
-			}
+			for i = 1, 3 do
+				gVel[i] = gPosRaw[i] + SELF_GPS_SPEED[i] - TARGET_G_POS_P[i]
+			end
+
 			---update target averaged speed
-			TARGET_G_VEL_AVE:update(gVel)
+			--TARGET_G_VEL_AVE:update(gVel)
+			TARGET_G_VEL_F:update(gVel)
 
 			---calculate future target position
 			for i = 1, 3 do
-				if TARGET_G_VEL_AVE:isStockFull() then
-					gPosFuture[i] = averagedTargetPos[i] + TARGET_G_VEL_AVE:getAveragedTable()[i] * (PURE_TIMELAG + TIMELAG)
+				if --[[TARGET_G_VEL_AVE:isStockFull()]] TARGET_G_VEL_F.caledNumber > 20 then
+					gPosFuture[i] = averagedTargetPos[i] + TARGET_G_VEL_F:getTable()[i] * (PURE_TIMELAG + TIMELAG)
 				else
 					gPosFuture[i] = averagedTargetPos[i]
 				end
@@ -96,7 +115,7 @@ function onTick()
 			---calculate target current position in local coordinate
 			lPos = ATTITUDE_BASE:getFutureAttitude(PURE_TIMELAG):rotateVectorWorldToLocal(TARGET_G_POS_AVE:getAveragedTable())
 		end
-		
+
 		---calculate radar angle
 		PIVOT_H, PIVOT_V = positionToRadian(lPos)
 		PIVOT_H, PIVOT_V = PIVOT_H / math.pi / 2, 2 * PIVOT_V / math.pi
@@ -109,7 +128,8 @@ function onTick()
 		---zero initialization of target position
 		TARGET_G_POS_P = { 0, 0, 0 }
 		TARGET_G_POS_AVE:resetTable()
-		TARGET_G_VEL_AVE:resetTable()
+		--TARGET_G_VEL_AVE:resetTable()
+		TARGET_G_VEL_F:reset()
 
 		---calculate radar angle
 		if input.getNumber(15) == -1 then
@@ -130,7 +150,7 @@ function onTick()
 	---output target position and velocity
 	for i = 1, 3 do
 		output.setNumber(i + 3, radarGPS[i] + TARGET_G_POS_AVE:getAveragedTable()[i])
-		output.setNumber(i + 9, TARGET_G_VEL_AVE:getAveragedTable()[i])
+		output.setNumber(i + 9, --[[TARGET_G_VEL_AVE:getAveragedTable()[i]] TARGET_G_VEL_F:getTable()[i])
 	end
 
 	---output lag of this system and is tracking
@@ -140,23 +160,4 @@ function onTick()
 	---output radar angle
 	output.setNumber(31, PIVOT_V)
 	output.setNumber(32, PivotPID:update((PIVOT_H - input.getNumber(14) + 1.5) % 1 - 0.5, 0))
-end
-
-function clamp(value, max, min)
-	if value < min then
-		value = min
-	elseif value > max then
-		value = max
-	end
-	return value
-end
-
----@param vector table
----@return number azimuth
----@return number elevation
-function positionToRadian(vector)
-	local azimuth, elevation
-	azimuth = math.atan(vector[3], vector[1])
-	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
-	return azimuth, elevation
 end

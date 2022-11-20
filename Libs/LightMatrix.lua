@@ -566,5 +566,6 @@ LMatrix = {
 	end;
 	---@endsection
 
-}
+};
+
 ---@endsection LMatrix 1 LMATRIX

@@ -91,5 +91,5 @@ Vector3 = {
 		return v1:sub(v2):getNorm()
 	end;
 	---@endsection
-
 }
+---@endsection

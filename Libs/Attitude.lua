@@ -90,6 +90,5 @@ Attitude = {
 		return Attitude:new(self.pitch + self.pitchSpeed * time, self.roll + self.rollSpeed * time, self.yaw + self.yawSpeed * time)
 	end;
 	---@endsection
-
-
 }
+---@endsection

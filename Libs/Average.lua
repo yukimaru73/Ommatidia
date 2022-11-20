@@ -6,6 +6,7 @@ require("LifeBoatAPI.Utils.LBCopy")
 ---@field stock table
 ---@field average table
 Average = {
+
 	---@param cls Average
 	---@param length number
 	---@param tableNumber number
@@ -67,4 +68,6 @@ Average = {
 	isStockFull = function(self)
 		return #self.stock == self.length
 	end;
+	---@endsection
 }
+---@endsection
