@@ -11,6 +11,7 @@ IS_HORIZONTAL_PIVOT_VELOCITY = property.getBool("Horizontal Pivot")
 GUN_BASE_ATTITUDE = Attitude:new()
 
 PIVOT_H = 0
+PIVOT_H_OUT = 0
 PIVOT_V = 0
 PivotPID = PID:new(20, 0.005, 0.3, 0.08)
 
@@ -29,11 +30,13 @@ function onTick()
 
 	---output pivot angle
 	if IS_HORIZONTAL_PIVOT_VELOCITY then
-		PIVOT_H = clamp(PivotPID:update((clamp(PIVOT_H, MINIMUM_HORIZONTAL_ANGLE, MAXIMUM_HORIZONTAL_ANGLE) - input.getNumber(13) + 1.5) % 1 - 0.5, 0), -0.37, 0.37)
+		local clampedHorizontal = clamp(PIVOT_H, MINIMUM_HORIZONTAL_ANGLE, MAXIMUM_HORIZONTAL_ANGLE)
+		local pidValue = PivotPID:update((clampedHorizontal - input.getNumber(13) + 1.5) % 1 - 0.5, 0)
+		PIVOT_H_OUT = clamp(pidValue, -0.37, 0.37)
 	else
-		PIVOT_H = clamp(4 * PIVOT_H, MINIMUM_HORIZONTAL_ANGLE * 4, MAXIMUM_HORIZONTAL_ANGLE * 4)
+		PIVOT_H_OUT = clamp(4 * PIVOT_H, MINIMUM_HORIZONTAL_ANGLE * 4, MAXIMUM_HORIZONTAL_ANGLE * 4)
 	end
-	output.setNumber(1,PIVOT_H)
+	output.setNumber(1,PIVOT_H_OUT)
 	output.setNumber(2, clamp(4 * PIVOT_V, MINIMUM_VERTICAL_ANGLE, MAXIMUM_VERTICAL_ANGLE))
 end
 
