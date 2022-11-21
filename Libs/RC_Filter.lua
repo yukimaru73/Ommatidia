@@ -4,7 +4,7 @@ require("LifeBoatAPI.Utils.LBCopy")
 ---@class RC_Filter
 ---@field alpha number
 ---@field caledNumber number
----@field lastValueTable table
+---@field lastValueTable table<number>
 RC_Filter = {
 
 	---@param cls RC_Filter
@@ -26,19 +26,14 @@ RC_Filter = {
 	---@param self RC_Filter
 	---@param values table
 	---@return nil
-	update = function(self, values)
+	---@overload fun(self:RC_Filter, values:number):nil
+	update = function(self, values, alpha)
+		alpha = alpha or self.alpha
 		self.caledNumber = self.caledNumber + 1
 		for i = 1, #values do
+			local threshold = math.abs(values[i] - self.lastValueTable[i])
 			self.lastValueTable[i] = self.alpha * self.lastValueTable[i] + (1 - self.alpha) * values[i]
 		end
-	end;
-	---@endsection
-
-	---@section getTable
-	---@param self RC_Filter
-	---@return table
-	getTable = function(self)
-		return self.lastValueTable
 	end;
 	---@endsection
 

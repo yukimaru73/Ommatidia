@@ -1,6 +1,6 @@
 require("Libs.Vector3")
 
-BASE_DISTANCE = 2
+BASE_DISTANCE = 1.5
 INPUT_TARGETS = {}
 
 function onTick()

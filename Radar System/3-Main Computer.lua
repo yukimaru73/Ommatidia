@@ -25,10 +25,7 @@ function clamp(value, max, min)
 end
 
 function positionToRadian(vector)
-	local azimuth, elevation
-	azimuth = math.atan(vector[3], vector[1])
-	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
-	return azimuth, elevation
+	return math.atan(vector[3], vector[1]), math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
 end
 
 TIMELAG = property.getNumber("Position Averaging Tick")
@@ -86,10 +83,9 @@ function onTick()
 
 	if input.getBool(1) and input.getBool(2) then ---tracking mode
 
-		local lPos = { 0, 0, 0 }
 		gPosRaw = ATTITUDE_RADAR:rotateVectorLocalToWorld(TARGET_POS)
 		TARGET_G_POS_AVE:update(gPosRaw)
-		local averagedTargetPos = TARGET_G_POS_AVE:getAveragedTable()
+		local averagedTargetPos, lPos = TARGET_G_POS_AVE:getAveragedTable(), { 0, 0, 0 }
 
 		if IS_TRACKING then ---if tracking is continuous
 			---calculate target speed
@@ -104,7 +100,7 @@ function onTick()
 			---calculate future target position
 			for i = 1, 3 do
 				if --[[TARGET_G_VEL_AVE:isStockFull()]] TARGET_G_VEL_F.caledNumber > 20 then
-					gPosFuture[i] = averagedTargetPos[i] + TARGET_G_VEL_F:getTable()[i] * (PURE_TIMELAG + TIMELAG)
+					gPosFuture[i] = averagedTargetPos[i] + TARGET_G_VEL_F.lastValueTable[i] * (PURE_TIMELAG + TIMELAG)
 				else
 					gPosFuture[i] = averagedTargetPos[i]
 				end
@@ -150,7 +146,7 @@ function onTick()
 	---output target position and velocity
 	for i = 1, 3 do
 		output.setNumber(i + 3, radarGPS[i] + TARGET_G_POS_AVE:getAveragedTable()[i])
-		output.setNumber(i + 9, --[[TARGET_G_VEL_AVE:getAveragedTable()[i]] TARGET_G_VEL_F:getTable()[i])
+		output.setNumber(i + 9, --[[TARGET_G_VEL_AVE:getAveragedTable()[i]] TARGET_G_VEL_F.lastValueTable[i])
 	end
 
 	---output lag of this system and is tracking
