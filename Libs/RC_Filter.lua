@@ -31,7 +31,10 @@ RC_Filter = {
 		alpha = alpha or self.alpha
 		self.caledNumber = self.caledNumber + 1
 		for i = 1, #values do
-			local threshold = math.abs(values[i] - self.lastValueTable[i])
+			local difference = math.abs(values[i] - self.lastValueTable[i])
+			if difference > 0.02 then
+				alpha = alpha * 0.8
+			end
 			self.lastValueTable[i] = self.alpha * self.lastValueTable[i] + (1 - self.alpha) * values[i]
 		end
 	end;
