@@ -29,12 +29,11 @@ Quaternion = {
 	---@param target Quaternion B
 	---@return Quaternion
 	product = function(self, target)
-		local a = self
-		return a:_new(
-			target.x * a.w - target.y * a.z + target.z * a.y + target.w * a.x,
-			target.x * a.z + target.y * a.w - target.z * a.x + target.w * a.y,
-			-target.x * a.y + target.y * a.x + target.z * a.w + target.w * a.z,
-			-target.x * a.x - target.y * a.y - target.z * a.z + target.w * a.w
+		return self:_new(
+			target.x * self.w - target.y * self.z + target.z * self.y + target.w * self.x,
+			target.x * self.z + target.y * self.w - target.z * self.x + target.w * self.y,
+			-target.x * self.y + target.y * self.x + target.z * self.w + target.w * self.z,
+			-target.x * self.x - target.y * self.y - target.z * self.z + target.w * self.w
 		)
 	end;
 	---@endsection
@@ -64,8 +63,8 @@ Quaternion = {
 	---@param vector table Vector3
 	---@return table
 	rotateVector = function(self, vector)
-		local result, a = {}, self
-		local q = a:product(a:_new(vector[1], vector[2], vector[3], 0):product(a:getConjugateQuaternion()))
+		local result = {}
+		local q = self:product(self:_new(vector[1], vector[2], vector[3], 0):product(self:getConjugateQuaternion()))
 		result[1] = q.x
 		result[2] = q.y
 		result[3] = q.z
@@ -92,3 +91,4 @@ Quaternion = {
 	end
 	---@endsection
 }
+---@endsection

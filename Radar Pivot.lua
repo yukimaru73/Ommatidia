@@ -113,3 +113,4 @@ function getAngle(vector)
 	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
 	return azimuth / math.pi / 2, 2 * elevation / math.pi
 end
+

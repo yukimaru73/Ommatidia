@@ -5,12 +5,15 @@ FOUND = false
 
 
 function onTick()
+	---zero initialization
 	local xt, yt, zt = 0, 0, 0
 	FOUND = false
 	for i = 1, 9 do
 		local x, y, z = input.getNumber(3 * i), input.getNumber(3 * i + 1), input.getNumber(3 * i + 2)
 		INPUT_TARGETS[i] = Vector3:new(x, y, z)
 	end
+
+	---subtract to the base position
 	for i = 1, 3 do
 		for j = 1, 3 do
 			if INPUT_TARGETS[i].x ~= 0 and INPUT_TARGETS[i].y ~= 0 and INPUT_TARGETS[i].z ~= 0 then
@@ -20,6 +23,8 @@ function onTick()
 			end
 		end
 	end
+
+	---calculate the average of max and min positions of near targets
 	if #INPUT_TARGETS > 0 then
 		local xmax, xmin, ymax, ymin, zmax, zmin = INPUT_TARGETS[1].x, INPUT_TARGETS[1].x, INPUT_TARGETS[1].y,
 			INPUT_TARGETS[1].y, INPUT_TARGETS[1].z, INPUT_TARGETS[1].z
@@ -35,11 +40,14 @@ function onTick()
 		end
 		xt, yt, zt = (xmax + xmin) / 2, (ymax + ymin) / 2, (zmax + zmin) / 2
 	end
+
+	---output target position
 	output.setNumber(1, xt)
 	output.setNumber(2, yt)
 	output.setNumber(3, zt)
-
 	output.setBool(1, FOUND)
+
+	---transfer seat input
 	output.setBool(2, input.getBool(1))
 	output.setNumber(15, input.getNumber(1))
 	output.setNumber(16, input.getNumber(2))

@@ -35,6 +35,17 @@ Vector3 = {
 	end;
 	---@endsection
 
+	---@section setVectorTable
+	---@param self Vector3
+	---@param t table
+	---@return nil
+	setVectorTable = function(self, t)
+		self.x = t[1]
+		self.y = t[2]
+		self.z = t[3]
+	end;
+	---@endsection
+
 	---@section getNorm
 	---@param self Vector3
 	---@return number
@@ -80,5 +91,5 @@ Vector3 = {
 		return v1:sub(v2):getNorm()
 	end;
 	---@endsection
-
 }
+---@endsection

@@ -549,7 +549,7 @@ LMatrix = {
 		return x
 	end;
 	---@endsection
-	--[[
+
 	---@section norm
 	--- Get norm of a matrix.
 	---@param self LMatrix
@@ -565,6 +565,7 @@ LMatrix = {
 		return math.sqrt(norm)
 	end;
 	---@endsection
-	]]
-}
+
+};
+
 ---@endsection LMatrix 1 LMATRIX

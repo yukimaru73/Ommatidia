@@ -1,5 +1,5 @@
---require("LifeBoatAPI.Utils.LBCopy")
-require("Libs.LBCopy")
+require("LifeBoatAPI.Utils.LBCopy")
+--require("Libs.LBCopy")
 require("Libs.Quaternion")
 
 ---@section Attitude 1 Attitude
@@ -37,6 +37,7 @@ Attitude = {
 	---@param tiltLeft number
 	---@param compass number
 	---@param tiltUp number
+	---@return nil
 	---@overload fun(self:Attitude, tiltFront:number, tiltLeft:number, compass:number):nil no tiltUp Mode
 	update = function(self, tiltFront, tiltLeft, compass, tiltUp)
 		
@@ -89,6 +90,5 @@ Attitude = {
 		return Attitude:new(self.pitch + self.pitchSpeed * time, self.roll + self.rollSpeed * time, self.yaw + self.yawSpeed * time)
 	end;
 	---@endsection
-
-
 }
+---@endsection
