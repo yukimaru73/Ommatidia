@@ -12,10 +12,11 @@ RC_Filter = {
 	---@param tableNumber number
 	---@return RC_Filter
 	new = function(cls, alpha, tableNumber)
-		local obj = {}
-		obj.alpha = alpha
-		obj.caledNumber = 0
-		obj.lastValueTable = {}
+		local obj = {
+			alpha = alpha,
+			caledNumber = 0,
+			lastValueTable = {}
+		}
 		for i = 1, tableNumber do
 			obj.lastValueTable[i] = 0
 		end
@@ -31,11 +32,16 @@ RC_Filter = {
 		alpha = alpha or self.alpha
 		self.caledNumber = self.caledNumber + 1
 		for i = 1, #values do
-			local difference = math.abs(values[i] - self.lastValueTable[i])
-			if difference > 0.02 then
-				alpha = alpha * 0.8
+			--[[
+			local difference, buf = math.abs(values[i] - self.lastValueTable[i]), alpha
+			if difference > 7 then
+				alpha = alpha * 0.995
+			elseif difference > 5 then
+				alpha = 1
 			end
-			self.lastValueTable[i] = self.alpha * self.lastValueTable[i] + (1 - self.alpha) * values[i]
+			]]
+			self.lastValueTable[i] = alpha * self.lastValueTable[i] + (1 - alpha) * values[i]
+			--alpha = buf
 		end
 	end;
 	---@endsection

@@ -41,7 +41,7 @@ TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
 TARGET_G_POS_AVE = Average:new(TIMELAG * 2 + 1, 3)
 --TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK * 2 + 1, 3)
-TARGET_G_VEL_F = RC_Filter:new(0.965, 3)
+TARGET_G_VEL_F = RC_Filter:new(0.969, 3)
 SELF_GPS_POS_P = { 0, 0, 0 }
 SELF_GPS_SPEED = { 0, 0, 0 }
 IS_TRACKING = false
@@ -53,14 +53,19 @@ PivotPID = PID:new(7, 0.007, 0.2, 0.05)
 INC = property.getNumber("Rotate Sensitivity") * .0001
 
 function onTick()
-	---zero initialization
-	local gPosRaw, gPosFuture, gVel = { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }
-
 	---input target position
 	TARGET_POS = { input.getNumber(1), input.getNumber(2), input.getNumber(3) }
 
+	---zero initialization
+	local gPosRaw, gPosFuture, gVel, distance, laserDistance =
+	{ 0, 0, 0 },
+	{ 0, 0, 0 },
+	{ 0, 0, 0 },
+	math.sqrt(TARGET_POS[1] ^ 2 + TARGET_POS[2] ^ 2 + TARGET_POS[3] ^ 2),
+	input.getNumber(17)
+
+	
 	---use laser distance if available.
-	local distance, laserDistance = math.sqrt(TARGET_POS[1] ^ 2 + TARGET_POS[2] ^ 2 + TARGET_POS[3] ^ 2),
 		input.getNumber(17)
 	if (laserDistance ~= 4000) and (math.abs(distance - laserDistance + 2) < 8) then
 		local a, e = positionToRadian(TARGET_POS)

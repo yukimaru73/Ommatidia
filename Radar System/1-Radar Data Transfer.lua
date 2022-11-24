@@ -1,6 +1,6 @@
 require("Libs.Vector3")
 
-BASE_DISTANCE = 1.5
+BASE_DISTANCE = 5
 INPUT_TARGETS = {}
 
 function onTick()
@@ -17,7 +17,9 @@ function onTick()
 			distance = input.getNumber(4 * i - 3)
 			azimuth = input.getNumber(4 * i - 2) * 2 * math.pi
 			elevation = input.getNumber(4 * i - 1) * 2 * math.pi
-			INPUT_TARGETS[#INPUT_TARGETS + 1] = { Vector3:newFromPolar(distance, azimuth, elevation), {}, distance }
+			if distance > 15 and distance < 8000 then
+				INPUT_TARGETS[#INPUT_TARGETS + 1] = { Vector3:newFromPolar(distance, azimuth, elevation), {}, distance }
+			end
 		end
 	end
 
@@ -26,7 +28,7 @@ function onTick()
 		if #INPUT_TARGETS>1 then
 			for i = 1, #INPUT_TARGETS do
 				for j = #INPUT_TARGETS, i + 1, -1 do
-					local noize_distance = BASE_DISTANCE * (INPUT_TARGETS[i][3] + INPUT_TARGETS[j][3]) * 0.005
+					local noize_distance = BASE_DISTANCE * INPUT_TARGETS[i][3] * 0.01
 					if Vector3.getDistanceBetween2Vectors(INPUT_TARGETS[i][1], INPUT_TARGETS[j][1]) < noize_distance then
 						INPUT_TARGETS[i][2][#INPUT_TARGETS[i][2] + 1] = j
 						INPUT_TARGETS[j][2][#INPUT_TARGETS[j][2] + 1] = i
