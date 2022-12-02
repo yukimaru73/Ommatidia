@@ -66,10 +66,10 @@ function onTick()
 
 	
 	---use laser distance if available.
-		input.getNumber(17)
-	if (laserDistance ~= 4000) and (math.abs(distance - laserDistance + 2) < 8) then
+	if (laserDistance ~= 4000) and (math.abs(distance - laserDistance + 2) < 10*distance/100) then
 		local a, e = positionToRadian(TARGET_POS)
-		TARGET_POS = { distance * math.cos(e) * math.cos(a), distance * math.sin(e), distance * math.cos(e) * math.sin(a) }
+		local d = (distance + laserDistance) / 2
+		TARGET_POS = { d * math.cos(e) * math.cos(a), d * math.sin(e), d * math.cos(e) * math.sin(a) }
 	end
 
 	---update self attitude

@@ -378,7 +378,7 @@ LMatrix = {
 				local y = a:dot(x)
 				local norm = 0
 				for j = 1, n do
-					norm = norm + y:get(j, 1) ^ 2
+					norm = norm + y:get(j, 1) * y:get(j, 1)
 				end
 				norm = math.sqrt(norm)
 				for j = 1, n do
@@ -468,15 +468,15 @@ LMatrix = {
 		for k = 1, m - 1 do
 			local absx = 0
 			for i = k, m do
-				absx = absx + r:get(i, k) ^ 2
+				absx = absx + r:get(i, k) * r:get(i, k)
 			end
 			absx = math.sqrt(absx)
 			if absx ~= 0 then
 				u:set(1, k, r:get(k, k) + (r:get(k, k)<0 and -1 or 1) * absx)
-				local absu = u:get(1, k) ^ 2
+				local absu = u:get(1, k) * u:get(1, k)
 				for i = k + 1, m do
 					u:set(1, i, r:get(i, k))
-					absu = absu + u:get(1, i) ^ 2
+					absu = absu + u:get(1, i) * u:get(1, i)
 				end
 				local h = LMatrix:new(m, m):eye()
 				for i = k, m do
@@ -490,8 +490,6 @@ LMatrix = {
 		end
 		return q, r
 	end;
-	---@endsection
-
 	---@endsection
 
 	---@section solve
@@ -559,7 +557,7 @@ LMatrix = {
 		local norm = 0
 		for i = 1, n do
 			for j = 1, m do
-				norm = norm + self:get(i, j) ^ 2
+				norm = norm + self:get(i, j) * self:get(i, j)
 			end
 		end
 		return math.sqrt(norm)
