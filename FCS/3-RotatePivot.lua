@@ -48,7 +48,7 @@ function onTick()
 	else
 		PIVOT_H_OUT = HORIZONTAL_UDC:update(PIVOT_H*4)
 	end
-	output.setNumber(1,PIVOT_H_OUT)
+	output.setNumber(1, PIVOT_H_OUT)
 	output.setNumber(2, VERTICAL_UDC:update(PIVOT_V*4))
 end
 

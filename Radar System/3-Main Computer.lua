@@ -39,11 +39,12 @@ ATTITUDE_RADAR = Attitude:new(0, 0, 0)
 
 TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
-TARGET_G_POS_AVE = Average:new(TIMELAG * 2 + 1, 3)
+TARGET_G_POS_AVE = Average:new(TIMELAG + 1, 3)
 --TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK * 2 + 1, 3)
 TARGET_G_VEL_F = RC_Filter:new(0.969, 3)
 SELF_GPS_POS_P = { 0, 0, 0 }
 SELF_GPS_SPEED = { 0, 0, 0 }
+RADAR_GPS_POS_P = { 0, 0, 0 }
 IS_TRACKING = false
 
 PIVOT_V = 0
@@ -78,7 +79,7 @@ function onTick()
 
 	---rotate self attitude
 	local gpsPos, altPos, selfGPS =
-	ATTITUDE_BASE:rotateVectorLocalToWorld(GPS_POSITION_DIFF),
+		ATTITUDE_BASE:rotateVectorLocalToWorld(GPS_POSITION_DIFF),
 		ATTITUDE_BASE:rotateVectorLocalToWorld(ALTITUDE_POSITION_DIFF),
 		{ input.getNumber(11), input.getNumber(12), input.getNumber(13) }
 
@@ -95,7 +96,7 @@ function onTick()
 		if IS_TRACKING then ---if tracking is continuous
 			---calculate target speed
 			for i = 1, 3 do
-				gVel[i] = gPosRaw[i] + SELF_GPS_SPEED[i] - TARGET_G_POS_P[i]
+				gVel[i] = (gPosRaw[i] + radarGPS[i]) - (TARGET_G_POS_P[i] + RADAR_GPS_POS_P[i])
 			end
 
 			---update target averaged speed
@@ -147,6 +148,7 @@ function onTick()
 	end
 	---store self gps position
 	SELF_GPS_POS_P = selfGPS
+	RADAR_GPS_POS_P = radarGPS
 
 	---output target position and velocity
 	for i = 1, 3 do

@@ -33,9 +33,9 @@ function onTick()
 
 	---calculate self GPS speed
 	local selfGPSPos = {input.getNumber(17), input.getNumber(18), input.getNumber(19)}
-	SELF_GPS_SPEED[1] = (selfGPSPos[1] - SELF_GPS_POS_P[1]) * 60
-	SELF_GPS_SPEED[2] = (selfGPSPos[2] - SELF_GPS_POS_P[2]) * 60
-	SELF_GPS_SPEED[3] = (selfGPSPos[3] - SELF_GPS_POS_P[3]) * 60
+	SELF_GPS_SPEED[1] = (selfGPSPos[1] - SELF_GPS_POS_P[1])
+	SELF_GPS_SPEED[2] = (selfGPSPos[2] - SELF_GPS_POS_P[2])
+	SELF_GPS_SPEED[3] = (selfGPSPos[3] - SELF_GPS_POS_P[3])
 
 	---store self GPS position
 	SELF_GPS_POS_P = selfGPSPos
@@ -50,9 +50,9 @@ function onTick()
 	end
 
 	---output target data and self attitude
-	output.setNumber(1, GUN_POS[1])
-	output.setNumber(2, GUN_POS[2])
-	output.setNumber(3, GUN_POS[3])
+	output.setNumber(1, GUN_POS[1] + SELF_GPS_SPEED[1] * 8)
+	output.setNumber(2, GUN_POS[2] + SELF_GPS_SPEED[2] * 8)
+	output.setNumber(3, GUN_POS[3] + SELF_GPS_SPEED[3] * 8)
 	for i = 1, 3 do
 		output.setNumber(i+3, input.getNumber(i+3))
 		output.setNumber(i+6, SELF_GPS_SPEED[i])
