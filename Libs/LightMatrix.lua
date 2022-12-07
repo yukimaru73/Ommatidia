@@ -15,6 +15,7 @@ require("LifeBoatAPI.Utils.LBCopy")
 ---@field mat table
 LMatrix = {
 
+	---@section new
 	---@param cls LMatrix
 	---@param row number row of matrix
 	---@param col number column of matrix
@@ -29,7 +30,9 @@ LMatrix = {
 		end
 		return LifeBoatAPI.lb_copy(cls, { row = row, col = col, mat = matmat })
 	end;
-	--[[
+	---@endsection
+	
+	---@section newFromTable
 	---@param cls LMatrix
 	---@param array table
 	---@return LMatrix
@@ -43,7 +46,9 @@ LMatrix = {
 		end
 		return LifeBoatAPI.lb_copy(cls, { row = row, col = col, mat = matmat })
 	end;
+	---@endsection
 	
+	---@section newDiagMatrix
 	---@param cls LMatrix
 	---@param array table
 	---@return LMatrix
@@ -55,7 +60,8 @@ LMatrix = {
 		end
 		return mat
 	end;
-	]]
+	---@endsection
+	
 	---@section get
 	---@param self LMatrix
 	---@param row number
@@ -104,12 +110,15 @@ LMatrix = {
 	--- Calculate addition of 2 matrix. Both Matrix are must be same shape.
 	---@param self LMatrix
 	---@param mat LMatrix
+	---@param scalar number
 	---@return LMatrix
-	add = function(self, mat)
+	---@overload fun(self:LMatrix, mat:LMatrix):LMatrix
+	add = function(self, mat,scalar)
+		scalar = scalar or 1
 		local amat = LMatrix:new(self.row, self.col)
 		for ir = 1, self.row do
 			for ic = 1, self.col do
-				amat:set(ir, ic, self:get(ir, ic) + mat:get(ir, ic))
+				amat:set(ir, ic, self:get(ir, ic) + mat:get(ir, ic)*scalar)
 			end
 		end
 		return amat
@@ -166,7 +175,7 @@ LMatrix = {
 		return mmat
 	end;
 	---@endsection
-	--[[
+
 	---@section cross
 	--- Calculate cross product of 2 matrix(A×B). A and B must be 3x1 matrix.
 	---@param self LMatrix A
@@ -302,7 +311,7 @@ LMatrix = {
 		return inv
 	end;
 	---@endsection
-	]]
+
 	---@section transpose
 	--- Calculate transpose of the Matrix (A^T).
 	---@param self LMatrix
@@ -317,7 +326,7 @@ LMatrix = {
 		return t
 	end;
 	---@endsection
-	--[[
+
 	---@section eigvals
 	--- Get eigenvalues of a matrix.
 	---@param self LMatrix
@@ -457,7 +466,7 @@ LMatrix = {
 		return pmat, lmat, umat
 	end;
 	---@endsection
-	]]
+
 	---@section qr
 	--- Do QR decomposition(A(m*n)=Q(m*n)R(m*m)) with Householder transformation.
 	---@param self LMatrix
