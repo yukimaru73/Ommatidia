@@ -18,6 +18,7 @@ D = BALISTIC_NUMBER[2]
 D1 = 1 - BALISTIC_NUMBER[2]
 DIV_LOG_D = 1/math.log(D1)
 G = 30 / (60 ^ 2)
+GD = G / D
 PI_HALF = math.pi / 2
 
 ---calculate target-bullet position at the time and which jacobian matrix to use
@@ -37,7 +38,7 @@ PI_HALF = math.pi / 2
 ---@return LMatrix,LMatrix
 function FJ(dX, dY, dZ, bVx, bVy, bVz, Vx, Vy, Vz, L, pt, pth, pp, mf, mj)
 	local ptL, sth, sp, cth, cp, D1T = pt + L, math.sin(pth), math.sin(pp), math.cos(pth), math.cos(pp) , D1 ^ pt
-	local GD, D1T1LD1 = G / D, (D1T - 1) * DIV_LOG_D
+	local D1T1LD1 = (D1T - 1) * DIV_LOG_D
 
 	mf:set(1, 1, dY + Vy * ptL - (bVy + VEL * sth + GD) * D1T1LD1 + GD * pt)
 	mf:set(2, 1, dX + Vx * ptL - (bVx + VEL * cp * cth) * D1T1LD1)
