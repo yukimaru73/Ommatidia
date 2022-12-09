@@ -2,17 +2,17 @@ require("Libs.Attitude")
 require("Libs.PID")
 require("Libs.UpDownCounter")
 
-MAXIMUM_HORIZONTAL_ANGLE = -property.getNumber("Max Left Horizontal Angle") / 360
-MAXIMUM_VERTICAL_ANGLE = property.getNumber("Max Vertical Angle") / 90
-MINIMUM_HORIZONTAL_ANGLE = -property.getNumber("Max Right Horizontal Angle") / 360
-MINIMUM_VERTICAL_ANGLE = property.getNumber("Min Vertical Angle") / 90
+MAX_HORIZONTAL_ANGLE = -property.getNumber("Max Left Horizontal Angle") / 360
+MAX_VERTICAL_ANGLE = property.getNumber("Max Vertical Angle") / 90
+MIN_HORIZONTAL_ANGLE = -property.getNumber("Max Right Horizontal Angle") / 360
+MIN_VERTICAL_ANGLE = property.getNumber("Min Vertical Angle") / 90
 HORIZONTAL_SPEED = property.getNumber("Horizontal Speed") / 100
 VERTICAL_SPEED = property.getNumber("Vertical Speed") / 100
 
-HORIZONTAL_CONTINUOUS = (MAXIMUM_HORIZONTAL_ANGLE + MINIMUM_HORIZONTAL_ANGLE == 0) and (MAXIMUM_HORIZONTAL_ANGLE == 0.5)
+HORIZONTAL_CONTINUOUS = (MAX_HORIZONTAL_ANGLE + MIN_HORIZONTAL_ANGLE == 0) and (MAX_HORIZONTAL_ANGLE == 0.5)
 
-HORIZONTAL_UDC = UpDownCounter:new(HORIZONTAL_SPEED/100, MINIMUM_HORIZONTAL_ANGLE*4, MAXIMUM_HORIZONTAL_ANGLE*4)
-VERTICAL_UDC = UpDownCounter:new(VERTICAL_SPEED/100, MINIMUM_VERTICAL_ANGLE, MINIMUM_VERTICAL_ANGLE)
+HORIZONTAL_UDC = UpDownCounter:new(HORIZONTAL_SPEED/100, MIN_HORIZONTAL_ANGLE*4, MAX_HORIZONTAL_ANGLE*4)
+VERTICAL_UDC = UpDownCounter:new(VERTICAL_SPEED/100, MIN_VERTICAL_ANGLE, MAX_VERTICAL_ANGLE)
 
 IS_HORIZONTAL_PIVOT_VELOCITY = property.getBool("Horizontal Pivot")
 
@@ -32,13 +32,12 @@ function onTick()
 		local t, e, a = input.getNumber(1), input.getNumber(2), input.getNumber(3)
 		local pos = angleToPosition(a, e)
 		local posL = GUN_BASE_ATTITUDE:getFutureAttitude(8):rotateVectorWorldToLocal(pos)
-		PIVOT_H, PIVOT_V = positionToRadian(posL)
-
+		PIVOT_H, PIVOT_V = positionToTurn(posL)
 	end
 
 	---output pivot angle
 	if IS_HORIZONTAL_PIVOT_VELOCITY then
-		local clampedHorizontal, pidValue = clamp(PIVOT_H, MINIMUM_HORIZONTAL_ANGLE, MAXIMUM_HORIZONTAL_ANGLE), 0
+		local clampedHorizontal, pidValue = clamp(PIVOT_H, MIN_HORIZONTAL_ANGLE, MAX_HORIZONTAL_ANGLE), 0
 		if HORIZONTAL_CONTINUOUS then
 			pidValue = PivotPID:update((clampedHorizontal - input.getNumber(13) + 1.5) % 1 - 0.5, 0)
 		else
@@ -59,7 +58,7 @@ function angleToPosition(azimuth, elevation)
 	return { x, y, z }
 end
 
-function positionToRadian(vector)
+function posiionToTurn(vector)
 	local azimuth, elevation
 	azimuth = math.atan(vector[3], vector[1])
 	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
