@@ -487,10 +487,10 @@ LMatrix = {
 					u:set(1, i, r:get(i, k))
 					absu = absu + u:get(1, i) * u:get(1, i)
 				end
-				local h = LMatrix:new(m, m):eye()
+				local h, div_absu = LMatrix:new(m, m):eye(), 1 / absu
 				for i = k, m do
 					for j = k, m do
-						h:set(i, j, h:get(i, j) - 2 * u:get(1, i) * u:get(1, j) / absu)
+						h:set(i, j, h:get(i, j) - 2 * u:get(1, i) * u:get(1, j) * div_absu)
 					end
 				end
 				r = h:dot(r)
