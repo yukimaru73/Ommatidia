@@ -38,6 +38,11 @@ UpDownCounter = {
 		elseif self.currentValue > self.targetValue then
 			self.currentValue = math.max(self.currentValue - self.stepSize, self.targetValue)
 		end
+		if self.currentValue < self.minValue then
+			self.currentValue = self.minValue
+		elseif self.currentValue > self.maxValue then
+			self.currentValue = self.maxValue
+		end
 		return self.currentValue
 	end;
 	---@endsection

@@ -24,7 +24,7 @@ function clamp(value, max, min)
 	return value
 end
 
-function positionToRadian(vector)
+function positionToTurn(vector)
 	return math.atan(vector[3], vector[1]), math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
 end
 
@@ -68,7 +68,7 @@ function onTick()
 	
 	---use laser distance if available.
 	if (laserDistance ~= 4000) and (math.abs(distance - laserDistance + 2) < 10*distance/100) then
-		local a, e = positionToRadian(TARGET_POS)
+		local a, e = positionToTurn(TARGET_POS)
 		local d = (distance + laserDistance) / 2
 		TARGET_POS = { d * math.cos(e) * math.cos(a), d * math.sin(e), d * math.cos(e) * math.sin(a) }
 	end
@@ -119,7 +119,7 @@ function onTick()
 		end
 
 		---calculate radar angle
-		PIVOT_H, PIVOT_V = positionToRadian(lPos)
+		PIVOT_H, PIVOT_V = positionToTurn(lPos)
 		PIVOT_H, PIVOT_V = PIVOT_H / math.pi / 2, 2 * PIVOT_V / math.pi
 
 		---store target position
