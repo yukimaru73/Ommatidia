@@ -22,7 +22,7 @@ PIVOT_H = 0
 PIVOT_H_OUT = 0
 PIVOT_V = 0
 PivotPID = PID:new(20, 0.005, 0.3, 0.08)
-DIV_PI2 = 1 / math.pi / 2
+DIV_PI2 = 0.5 / math.pi
 
 function onTick()
 	---update self attitude
@@ -59,7 +59,7 @@ function angleToPosition(azimuth, elevation)
 	return { x, y, z }
 end
 
-function posiionToTurn(vector)
+function positionToTurn(vector)
 	local azimuth, elevation
 	azimuth = math.atan(vector[3], vector[1])
 	elevation = math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))

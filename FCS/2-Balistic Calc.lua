@@ -6,7 +6,8 @@ BALISTIC_NUMBERS = {
 	{ 900, 0.005, 0.7, 600 }, --heavy auto cannon
 	{ 800, 0.002, 0.7, 3600 }, --battle cannon
 	{ 700, 0.001, 0.7, 3600 }, --artillery cannon
-	{ 600, 0.0005, 0.7, 3600 } --bertha cannon
+	{ 600, 0.0005, 0.7, 3600 }, --bertha cannon
+	{1600, 0.025, 0.7, 120}
 }
 
 

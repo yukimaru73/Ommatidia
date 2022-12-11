@@ -18,7 +18,7 @@ function sin(theta)
 	end
 	return sum
 end
-]]
+
 PI_HALF = math.pi/2
 debug.log("$$ START")
 for i = 1, 100000 do
@@ -28,3 +28,11 @@ for i = 1, 100000 do
 end
 
 debug.log("$$ END")
+]]
+T_TEST = {
+	id = 5
+}
+F_TEST = function(a)
+	a.id = 0
+end
+F_TEST(T_TEST)
