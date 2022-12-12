@@ -1,6 +1,10 @@
 {
 	"folders": [
 		{
+			"name": "Flight Engine ECU",
+			"path": "../Flight Engine ECU"
+		},
+		{
 			"name": "Ommatidia",
 			"path": "."
 		}

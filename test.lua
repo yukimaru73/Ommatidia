@@ -29,10 +29,10 @@ end
 
 debug.log("$$ END")
 ]]
-T_TEST = {
-	id = 5
-}
-F_TEST = function(a)
-	a.id = 0
+a = {}
+a[1] = 1
+a[20] = 2
+a[30] = 3
+for i, v in pairs(a) do
+	print(v)
 end
-F_TEST(T_TEST)
