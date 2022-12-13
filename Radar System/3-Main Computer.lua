@@ -29,7 +29,7 @@ function positionToTurn(vector)
 end
 
 TIMELAG = property.getNumber("Position Averaging Tick")
-PURE_TIMELAG = 10
+PURE_TIMELAG = 6
 --VELOCITY_AVERAGING_TICK = property.getNumber("Velocity Averaging Tick")
 GPS_POSITION_DIFF = createTableFromString(property.getText("GPS Position Diff"))
 ALTITUDE_POSITION_DIFF = createTableFromString(property.getText("Altitude Position Diff"))

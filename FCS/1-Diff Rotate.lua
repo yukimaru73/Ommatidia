@@ -43,22 +43,19 @@ function onTick()
 	---check target is not self
 	local dx, dy, dz = GUN_POS[1] - input.getNumber(4), GUN_POS[2] - input.getNumber(5), GUN_POS[3] - input.getNumber(6)
 	local distance = math.sqrt(dx * dx + dy * dy + dz * dz)
-	if distance < 10 then
+	if distance < 20 then
 		output.setBool(1,false)
 	else
 		output.setBool(1,input.getBool(1))
 	end
-
-	---output target data and self attitude
-	output.setNumber(1, GUN_POS[1] + SELF_GPS_SPEED[1] * 8)
-	output.setNumber(2, GUN_POS[2] + SELF_GPS_SPEED[2] * 8)
-	output.setNumber(3, GUN_POS[3] + SELF_GPS_SPEED[3] * 8)
+	
 	for i = 1, 3 do
-		output.setNumber(i+3, input.getNumber(i+3))
-		output.setNumber(i+6, SELF_GPS_SPEED[i])
-		output.setNumber(i+9, input.getNumber(i+9))
-		output.setNumber(i+12, input.getNumber(i+12))
+		output.setNumber(i, GUN_POS[i] + SELF_GPS_SPEED[i] * 5)--turret position
+		output.setNumber(i+3, input.getNumber(i+3))--target position
+		output.setNumber(i+6, SELF_GPS_SPEED[i])--bullet additional muzzle velocity
+		output.setNumber(i+9, input.getNumber(i+9))--target velocity
+		output.setNumber(i+13, input.getNumber(i+13))--turret attitude
 	end
-	output.setNumber(16, input.getNumber(16))
-	output.setNumber(20, input.getNumber(20))
+	output.setNumber(13, input.getNumber(13))--turret pivot(horizontal) current rotation
+	output.setNumber(20, input.getNumber(20))--radar data latency
 end
