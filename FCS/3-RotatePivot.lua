@@ -42,7 +42,7 @@ function onTick()
 		if HORIZONTAL_CONTINUOUS then
 			pidValue = PivotPID:update((clampedHorizontal - input.getNumber(13) + 1.5) % 1 - 0.5, 0)
 		else
-			pidValue = PivotPID:update(clampedHorizontal - input.getNumber(13), cha0)
+			pidValue = PivotPID:update(clampedHorizontal - input.getNumber(13), 0)
 		end
 		PIVOT_H_OUT = clamp(pidValue, -HORIZONTAL_SPEED, HORIZONTAL_SPEED)
 	else
