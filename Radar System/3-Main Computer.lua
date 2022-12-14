@@ -28,7 +28,8 @@ function positionToTurn(vector)
 	return math.atan(vector[3], vector[1]), math.atan(vector[2], math.sqrt(vector[1] ^ 2 + vector[3] ^ 2))
 end
 
-TIMELAG = property.getNumber("Position Averaging Tick")
+--TIMELAG = property.getNumber("Position Averaging Tick")
+TIMELAG = 3
 PURE_TIMELAG = 6
 --VELOCITY_AVERAGING_TICK = property.getNumber("Velocity Averaging Tick")
 GPS_POSITION_DIFF = createTableFromString(property.getText("GPS Position Diff"))
@@ -41,7 +42,7 @@ TARGET_POS = { 0, 0, 0 }
 TARGET_G_POS_P = { 0, 0, 0 }
 TARGET_G_POS_AVE = Average:new(TIMELAG + 1, 3)
 --TARGET_G_VEL_AVE = Average:new(VELOCITY_AVERAGING_TICK * 2 + 1, 3)
-TARGET_G_VEL_F = RC_Filter:new(0.969, 3)
+TARGET_G_VEL_F = RC_Filter:new(0.965, 3)
 SELF_GPS_POS_P = { 0, 0, 0 }
 SELF_GPS_SPEED = { 0, 0, 0 }
 RADAR_GPS_POS_P = { 0, 0, 0 }
