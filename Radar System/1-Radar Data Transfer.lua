@@ -1,5 +1,7 @@
 require("Libs.Vector3")
 
+MAXIMUM_DISTANCE = property.getNumber("Maximum Distance")
+
 BASE_DISTANCE = 5
 INPUT_TARGETS = {}
 
@@ -17,7 +19,8 @@ function onTick()
 			distance = input.getNumber(4 * i - 3)
 			azimuth = input.getNumber(4 * i - 2) * 2 * math.pi
 			elevation = input.getNumber(4 * i - 1) * 2 * math.pi
-			if distance > 15 and distance < 4000 then
+			if distance > 15 and distance < MAXIMUM_DISTANCE
+			 then
 				INPUT_TARGETS[#INPUT_TARGETS + 1] = { Vector3:newFromPolar(distance, azimuth, elevation), {}, distance }
 			end
 		end
