@@ -1,5 +1,6 @@
 〈JP〉
-追跡レーダーと弾道計算機のサンプルビークルです。
+追跡レーダーと弾道計算機のサンプルビークルです。レーダーで敵を追跡し、得られた情報から偏差射撃を行うことができます。
+＊弾道計算機の処理は非常に負荷が高いものです。3台以上の運用は非推奨です＊
 
 § 概要
 
@@ -97,7 +98,8 @@
 
 
 〈EN〉
-Sample vehicle with tracking radar and ballistic calculator.
+This is a sample vehicle for tracking radar and ballistic calculator. The radar tracks the enemy, and deviation fire can be performed based on the information obtained.
+*Ballistic calculator processing is extremely high load; operation of more than three units is not recommended.*
 
 § Overview
 
