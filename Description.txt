@@ -25,13 +25,15 @@
 
 §§ プロパティ
 
-　追跡レーダーのプロパティの設定項目は以下の３つです。
+　追跡レーダーのプロパティの設定項目は以下の4つです。
 
 　[GPS Position Diff]
 　->レーダーの回転軸の位置とGPSブロックの位置の差を設定します。レーダーの回転軸の位置はボタンがあるマス、GPSブロックの位置はGPSブロックのX座標のノードがあるマスです。
 　記述方法はX,Y,Zの順で、マイナスの値を入れることもできます。軸の取り方は、レーダーの初期方向に依存します。例として、レーダーがワークベンチ後方から見て正面側を向いた状態でスポーンさせる　場合、ワークベンチ後方から見て正面をX軸＋、上をY軸＋、左をZ軸＋とします。
-　距離は、ブロックの中心と中心の距離です。例として、 ■□□□■ のように間に3ブロック分開いている場合、距離は1.00mになります。　
-	
+　距離は、ブロックの中心と中心の距離です。例として、 ■□□□■ のように間に3ブロック分開いている場合、距離は1.00mになります。
+
+　[Rotate Sensitivity]
+　->レーダーの回転速度を設定します。
 
 　[Altitude Position Diff]
 　->レーダーの回転軸の位置と高度センサの位置の差を設定します。設定の考え方は[GPS Position Diff]と同一です。
@@ -68,19 +70,19 @@
 　->入力/出力ノードに何らかの遅延が発生した場合、その遅延を補正するための値を設定します。単位はtickです。
 　例として、レーダーからの信号を無線で送信する場合、1を入力します。
 
-　[Max Left Horizontal Angle] [Max Right Horizontal Angle]
-　->砲身の左右の最大角度を設定します。単位は度です。Leftの場合はマイナス、Rightの場合はプラスの値を入力します。
-
-　[Max Up Vertical Angle] [Max Down Vertical Angle]
-　->砲身の上下の最大角度を設定します。単位は度です。Upの場合はプラス、Downの場合はマイナスの値を入力します。
-
-　[Horizontal Speed] [Vertical Speed]
-　->砲身の回転速度を指定します。
-
 　[Horizontal Pivot]
 　->水平旋回のピボットがロボティックピボットか、速度ピボットかを指定します。
 　この項目で速度ピボットを指定した場合、マイコンのCurrentRotationにピボットの回転角度のノードを接続してください。
 　ロボティックピボットの場合、水平旋回角度を90度以上に設定しても90度までしか回転できません。
+
+　[Horizontal Speed] [Vertical Speed]
+　->砲身の回転速度を指定します。
+
+　[Max Left Horizontal Angle] [Max Right Horizontal Angle]
+　->砲身の左右の最大角度を設定します。単位は度です。Leftの場合はプラス、Rightの場合はマイナスの値を入力します。
+
+　[Max Up Vertical Angle] [Max Down Vertical Angle]
+　->砲身の上下の最大角度を設定します。単位は度です。Upの場合はプラス、Downの場合はマイナスの値を入力します。
 
 §§入出力の仕様
 
@@ -100,101 +102,101 @@
 
 〈EN〉
 This is a sample vehicle for tracking radar and ballistic calculator. The radar tracks the enemy, and deviation fire can be performed based on the information obtained.
-*Ballistic calculator processing is extremely high load; operation of more than three units is not recommended.*
+*Ballistic calculator processing is extremely high load; operation of more than three units is not recommended*.
 
-§ Overview
+§ Outline
 
-[Tracking radar].
-This radar tracks targets. It is manually operated until it goes into tracking. tracking is started by turning on Ch.1.
+【Tracking radar】
+This radar tracks the target. It is manually operated until it enters tracking. tracking is started by turning on Ch.1.
 Target position and velocity are output as composite signals.
 
 
-Ballistic Calculator
-Calculates the firing angle of a shell based on the target's position and velocity. If the target is within the effective range of the shell selected by the property, the vertical/horizontal axis angles are output.
+【Ballistic calculator】
+Calculates the firing angle of the shell based on the target's position and velocity. If the target is within the effective range of the shell selected by the property, the vertical/horizontal axis angles are output.
 The horizontal axis can be selected from the robotic pivot/velocity pivot by property.
 
-§ [Tracking radar]
+§ 【Tracking radar】
 
 §§ Installation of sensors
 
-In addition to the tilt sensor and compass sensor installed on the radar body, install a tilt sensor, compass sensor, GPS sensor, and altitude sensor on its base.
-Two tilt sensors are to be installed on the base, one facing left and the other facing front, when the radar is facing the direction from behind.
-The compass sensor is placed on the base so that the arrow points in the front direction when viewed from behind in the direction the radar is facing.
-There are no restrictions on the location of the GPS and altitude sensors. They can be placed anywhere on the same merge as the base of the radar's horizontal turning pivot. Compensation for the distance away from the radar is set in the properties.
-Each sensor should be connected to a node on the radar's microcontroller.
+　In addition to the tilt sensor and compass sensor installed on the radar body, install a tilt sensor, compass sensor, GPS sensor, and altitude sensor on its base.
+　Two tilt sensors are to be installed on the base, one facing left and the other facing front, when the radar is facing the direction from behind.
+　The compass sensor is placed on the base so that the arrow points in the front direction when viewed from behind in the direction the radar is facing.
+　GPS and altitude sensors are not restricted in their placement. They can be placed anywhere on the same merge as the base of the radar's horizontal turning pivot. The compensation for the distance from the radar is set in the properties.
+　Each sensor should be connected to a node on the radar's microcontroller.
 
-§§ Property
+§§ Property Settings
 
-The following three items are available for setting the properties of the tracking radar.
+　There are four tracking radar property settings
 
-[GPS Position Diff]
-->Set the difference between the position of the radar's rotation axis and the position of the GPS block. The position of the radar axis of rotation is the square where the button is located, and the position of the GPS block is the square where the node of the X coordinate of the GPS block is located.
-　The description is in the order of X, Y, Z. Negative values can also be entered. The way the axes are taken depends on the initial orientation of the radar. As an example, if you want the radar to spawn with the front side facing you as seen from the back of the workbench, the X axis + is the front side as seen from the back of the workbench, the Y axis + is the top, and the Z axis + is the left.
-　Distance is the distance between the center of the block and the center of the block. As an example, if there is an opening of 3 blocks in between, such as ■□□□■, the distance will be 1.00 meter.
+　[GPS Position Diff]
+　->Set the difference between the position of the radar's rotation axis and the position of the GPS block. The position of the radar axis of rotation is the square where the button is located, and the position of the GPS block is the square where the node of the X coordinate of the GPS block is located.
+　The description is in the order of X, Y, Z. Negative values can also be entered. The way the axes are taken depends on the initial orientation of the radar. As an example, if the radar is to spawn with the front side facing you as seen from the rear of the workbench, the X axis + is for the front side as seen from the rear of the workbench, the Y axis + for the top, and the Z axis + for the left.
+　Distance is the distance between the center of the block and the center of the block. As an example, if there are three blocks open between the blocks, such as ■□□□■, the distance is 1.00 m.
 
+　[Altitude Position Diff]
+　->Set the difference between the radar rotation axis position and the altitude sensor position. The concept of the setting is the same as that of [GPS Position Diff].
 
-[Altitude Position Diff]
-->Set the difference between the radar rotation axis position and the altitude sensor position. The setting concept is the same as [GPS Position Diff].
-　Input the distance between center of the radar axis and center of the altitude sensor all the.
-
-[Maximum Distance]
-->Set the maximum distance for tracking. You can set up to 8km.
+　[Rotate Sensitivity]
+　->Sets the radar rotation speed.
 
 
-
-§ [Ballistic calculator]
-
-§§ Installation of sensors
-
-Tilt sensor and compass sensor are installed on the same merge as the base of the horizontal turning pivot as well as the base of the radar. A GPS sensor and an altitude sensor are also installed.
-Each sensor should be connected to the microcontroller node of the ballistic calculator.
-Installation on the merge where the gun barrel is located is not required.
-
-§§ Properties
-
-There are eight ballistic calculator property settings as follows
-
-[GPS Position Diff]
-->Same as radar.
+　[Maximum Distance]
+　->Set the maximum distance for tracking. You can set up to 8km.
 
 
-[Altitude Position Diff]
-->Same as radar.
 
-[Gun Type]
-->Set the type of firearm. Currently, rockets are not supported.
+§ 【Ballistic calculator】
+It works by connecting the information from the radar's microcontroller to the composite node. As long as the channel of the information to be input is correct, it can work even if GPS coordinates are input manually.
 
-[Additional Data Lag]
-->Set the value to compensate for any lag in input/output nodes. The unit is tick.
-As an example, enter 1 if the signal from the radar is transmitted wirelessly.
 
-[Max Left Horizontal Angle] [Max Right Horizontal Angle]
-->Set the maximum left/right angle of the barrel. Enter a minus value for Left and a plus value for Right.
 
-[Max Up Vertical Angle] [Max Down Vertical Angle]
-->Set the maximum vertical angle of the barrel. Enter a positive value for Up and a negative value for Down.
+　Tilt and compass sensors are installed on the same merge as the base of the horizontal turning pivot as well as the base of the radar. A GPS sensor and an altitude sensor are also installed.
+　Each sensor should be connected to the microcontroller node of the ballistic calculator.
+　Installation on the merge where the gun barrel is located is not required.
 
-[Horizontal Speed] [Vertical Speed]
-->Specify the barrel rotation speed.
+§§ Property Settings
 
-[Horizontal Pivot]
-->Specifies whether the horizontal pivot is a robotic pivot or a velocity pivot.
-If you specify a velocity pivot in this item, connect a node for the pivot's rotation angle to CurrentRotation in the microcontroller.
-In the case of a robotic pivot, it can only rotate up to 90 degrees even if the horizontal turning angle is set to 90 degrees or more.
+　There are eight ballistic calculator property settings as follows
+
+　[GPS Position Diff]
+　->Same as Radar.
+
+　[Altitude Position Diff]
+　->Same as radar.
+
+　[Gun Type]
+　->Set the type of firearm. Currently, rockets are not supported.
+
+　[Additional Data Lag]
+　->Set the value to compensate for any lag in input/output nodes. The unit is tick.
+　As an example, enter 1 if the signal from the radar is transmitted wirelessly.
+
+　[Horizontal Pivot]
+　->Specifies whether the horizontal pivot is a robotic pivot or a velocity pivot.
+　If velocity pivot is specified in this item, connect a node of the pivot's rotation angle to CurrentRotation of the microcontroller.
+　In the case of a robotic pivot, it can only rotate up to 90 degrees even if the horizontal turning angle is set to 90 degrees or more.
+
+　[Horizontal Speed] [Vertical Speed]
+　->Specifies the barrel rotation speed.
+
+　[Max Left Horizontal Angle] [Max Right Horizontal Angle]
+　->Set the maximum left/right angle of the barrel. Enter a positive value for Left and a negative value for Right.
+
+　[Max Up Vertical Angle] [Max Down Vertical Angle]
+　->Set the maximum vertical angle of the barrel. Enter a positive value for Up and a negative value for Down.
 
 §§ Input/output specifications
 
-Composite input]
-[Input]
+　【Composite input】
 　[ON/OFF]
-　Ch.1: Specifies whether or not ballistic calculation is performed. if ON, calculation is performed. If connected to a radar, it is entered at the same time as the target is detected.
+　Ch.1: Specifies whether ballistic calculation is performed; if ON, calculation is performed. When connected to the radar's microcomputer, the input is made at the same time as target detection.
 
-　[Number]
+　[Number].
 　Ch.4~6: Coordinates of the target. Equivalent to (4,5,6)->(GPS_X,Altitude,GPS_Y).
 　Ch.10~12: Velocity of the target. Axes are the same as coordinates.
 
-[Output]
+　【Output】
 　[Number]
 　Ch.1: Horizontal turning angle of the gun barrel.
 　Ch.2: Vertical turning angle of the barrel.
-

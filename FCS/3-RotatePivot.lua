@@ -2,10 +2,10 @@ require("Libs.Attitude")
 require("Libs.PID")
 require("Libs.UpDownCounter")
 
-MAX_HORIZONTAL_ANGLE = -property.getNumber("Max Left Horizontal Angle") / 360
-MAX_VERTICAL_ANGLE = property.getNumber("Max Vertical Angle") / 90
-MIN_HORIZONTAL_ANGLE = -property.getNumber("Max Right Horizontal Angle") / 360
-MIN_VERTICAL_ANGLE = property.getNumber("Min Vertical Angle") / 90
+MAX_HORIZONTAL_ANGLE = property.getNumber("Max Left Horizontal Angle") / 360
+MIN_HORIZONTAL_ANGLE = property.getNumber("Max Right Horizontal Angle") / 360
+MAX_VERTICAL_ANGLE = property.getNumber("Max Up Vertical Angle") / 90
+MIN_VERTICAL_ANGLE = property.getNumber("Max Down Vertical Angle") / 90
 HORIZONTAL_SPEED = property.getNumber("Horizontal Speed") / 100
 VERTICAL_SPEED = property.getNumber("Vertical Speed") / 100
 
