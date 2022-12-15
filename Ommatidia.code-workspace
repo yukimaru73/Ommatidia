@@ -4,5 +4,8 @@
 			"name": "Ommatidia",
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"commentTranslate.hover.enabled": true
+	}
 }

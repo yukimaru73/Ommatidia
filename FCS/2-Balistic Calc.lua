@@ -141,8 +141,8 @@ function onTick()
 			input.getNumber(20) + 5 + ADDITIONAL_DATA_LAG, --timelag
 			BALISTIC_NUMBER[3], --delta tau
 			20, --max iteration
-			0.01, --min error
-			VALMAT,
+			0.25, --min error(25cm)
+			VALMAT, --initial values
 			CONTINUOUS --is continuous
 		)
 	end
