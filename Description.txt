@@ -42,6 +42,7 @@
 
 
 §【弾道計算機】
+レーダーのマイコンからの情報をコンポジットノードに接続することで動作します。入力する情報のチャンネルさえ合っていれば、手動でGPS座標を入力しても動作します。
 
 §§ センサの設置
 
@@ -141,7 +142,7 @@ The following three items are available for setting the properties of the tracki
 
 
 
-§ [Ballistic calculator
+§ [Ballistic calculator]
 
 §§ Installation of sensors
 
