@@ -20,7 +20,7 @@
 　レーダー本体に設置されているティルトセンサ、コンパスセンサ以外に、その土台にティルトセンサ、コンパスセンサ、GPSセンサ、高度センサを設置します。
 　土台に設置するティルトセンサはレーダーが向いている方向を後ろから見た時、左向きに一つ、正面に一つ、合計２つ設置します。
 　土台に設置するコンパスセンサはレーダーが向いている方向を後ろから見た時、正面方向に矢印が向くように設置します。
-　GPSセンサ、高度センサは配置場所に制約はありません。レーダーの水平旋回ピボットの土台部分と同一マージであればどこにでも設置することができます。レーダーから離れた分の補正はプロパティで設　定します。
+　GPSセンサ、高度センサは配置する方向に制約はありません。レーダーの水平旋回ピボットの土台部分と同一マージであればどこにでも設置することができます。レーダーから離れた分の補正はプロパティで設定します。
 　各センサは、レーダーのマイコンのノードに接続してください。
 
 §§ プロパティ
@@ -122,8 +122,7 @@ The horizontal axis can be selected from the robotic pivot/velocity pivot by pro
 　In addition to the tilt sensor and compass sensor installed on the radar body, install a tilt sensor, compass sensor, GPS sensor, and altitude sensor on its base.
 　Two tilt sensors are to be installed on the base, one facing left and the other facing front, when the radar is facing the direction from behind.
 　The compass sensor is placed on the base so that the arrow points in the front direction when viewed from behind in the direction the radar is facing.
-　GPS and altitude sensors are not restricted in their placement. They can be placed anywhere on the same merge as the base of the radar's horizontal turning pivot. The compensation for the distance from the radar is set in the properties.
-　Each sensor should be connected to a node on the radar's microcontroller.
+　There are no restrictions on the direction in which GPS and altitude sensors can be placed. They can be placed anywhere as long as the merge is the same as the base of the radar's horizontal pivot. Compensation for distance from the radar is set by the properties.
 
 §§ Property Settings
 
